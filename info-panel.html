@@ -1,0 +1,60 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-item/all-imports.html">
+<link rel="import" href="bower_components/paper-styles/demo-pages.html">
+
+<dom-module id="info-panel">
+	<style>
+
+		:host {
+			background-color: white;
+    		padding: 24px;
+    		margin: 0 24px 24px 24px;
+    		display: inline-block;
+   			@apply(--shadow-elevation-2dp);
+		}
+		hr {
+			border: 0;
+			height: 1px;
+			background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
+			margin-bottom: 50px;
+		}
+		h2 {
+			margin-bottom: 5px;
+			margin-top: 0px;
+		}
+		:host > div {
+			@apply(--layout-vertical);
+			align-items: center;
+		}
+		paper-item b{
+			width: 75px;
+			overflow: hidden;
+		}
+		paper-item span {
+			margin-left: 10px;
+			width: 225px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			word-wrap: normal;
+		}
+	</style>
+	<template>
+			<h2>Info</h2><hr/>
+        	<div class="list short">
+        		<paper-item><b>Board:</b> <span>{{board}}</span></paper-item>
+        		<paper-item><b>Port:</b> <span>{{port}}</span></paper-item>
+        		<paper-item><b>Firmware:</b> <span>{{firmware}}</span></paper-item>
+        	</div>
+	</template>
+</dom-module>
+
+<script>
+Polymer({
+	is: 'info-panel',
+	properties: {
+		board: String,
+		port: String,
+		firmware: String
+	}
+});
+</script>

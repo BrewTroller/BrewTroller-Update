@@ -1,0 +1,12 @@
+@font-face {
+	font-family: Arroyo;
+	src: url('assets/arroyo.ttf');
+}
+
+* {
+	-webkit-user-select: none;
+}
+
+body {
+	padding: 0px !important;
+}

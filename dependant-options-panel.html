@@ -1,0 +1,126 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-styles/demo-pages.html">
+<link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="bower_components/paper-dropdown-select/paper-dropdown-select.html">
+
+<link rel="import" href="colors.html">
+
+
+<dom-module id="dependant-options-panel">
+	<style>
+
+		:host {
+			background-color: white;
+    		padding: 24px;
+    		margin: 0 24px 24px 24px;
+    		display: inline-block;
+   			@apply(--shadow-elevation-2dp);
+   			
+		}
+		hr {
+			border: 0;
+			height: 1px;
+			background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
+			margin-bottom: 10px;
+		}
+		h2 {
+			margin-bottom: 5px;
+			margin-top: 0px;
+			display: inline-block;
+		}
+		:host > div.layout {
+			height: 80%;
+			flex-flow: column wrap;
+			justify-content: center;
+			align-items: center;
+		}
+		.line {
+        	margin-bottom: 25px;
+        	width: 225px;
+      	}
+
+      	.line span {
+        	margin-left: 10px;
+        	display: inline-block;
+      	}
+      	.master {
+      		margin-left: 15px;
+      		vertical-align: text-top;
+      	}
+		paper-toggle-button {
+			--paper-toggle-button-checked-button-color: var(--bt-light-orange);
+			--paper-toggle-button-checked-bar-color: var(--bt-light-orange);
+			--paper-toggle-button-checked-ink-color: var(--bt-light-orange);
+			vertical-align: middle;
+		}
+		paper-slider {
+			--paper-slider-knob-color: var(--bt-light-orange);
+      		--paper-slider-active-color: var(--bt-light-orange);
+      		--paper-slider-pin-color: var(--bt-dark-orange);
+      		height: 55px;
+		}
+		paper-dropdown-select {
+			height: 55px;
+		}
+		#optionDesc {
+			position: absolute;
+			bottom: 0;
+			width: 95%;
+			opacity: 0.7;
+		}
+	</style>
+	<template>
+			<h2>{{optionTitle}}</h2><paper-toggle-button class="master" checked="{{masterOption.on}}"></paper-toggle-button><hr/>
+   			<div class="layout vertical flex">
+   				<template is="dom-repeat" items="{{boolOptions}}">
+   					<div class="line"><paper-toggle-button checked="{{item.on}}" disabled$="{{!masterOption.on}}"></paper-toggle-button><span>{{item.name}}</span></div>
+   				</template>
+   				<template is="dom-repeat" items="{{enumOptions}}" as="optionSet">
+   					<div class="line">
+   						<paper-dropdown-select label="{{optionSet.name}}" disabled$="{{!masterOption.on}}">
+   						<template is="dom-repeat" items="{{optionSet.options}}">
+        					<paper-item value="{{item}}">
+          						<span>{{item}}</span>
+        					</paper-item>
+     					 </template>
+   						</paper-dropdown-select>
+   					</div>
+   				</template>
+   				<template is="dom-repeat" items="{{rangeOptions}}">
+   					<div class="line"><span>{{item.name}}</span><paper-slider pin value="{{item.value}}" max="{{item.maxVal}}" min="{{item.minVal}}" step="{{item.step}}" editable disabled$="{{!masterOption.on}}"></paper-slider></div>
+   				</template>
+   			</div>
+   			<p id="optionDesc">{{optionDescription}}</p>
+   	</template>
+</dom-module>
+
+<script>
+Polymer({
+	is: 'dependant-options-panel',
+	properties: {
+		optionTitle: String,
+		optionDescription: String,
+		boolOptions: Array,
+		masterOption: {
+			type: Object,
+			observer: '_masterChanged'
+		},
+		rangeOptions: Array,
+		enumOptions: Array
+	},
+	ready: function() {
+		this.optionTitle = "Direct Fired RIMS";
+		this.optionDescription = "Enable and configure Direct Fired RIMS. asldjf lasjkh glkh sad glkjas hdfl;ashjflawh ouf af lkjasdfhjlk alkewal falkjsfdhasdlkfaskljs";
+		this.masterOption = {name: "Direct Fired RIMS", on: false};
+		this.boolOptions = [{name: "RIMS During Sparge", on : false}]
+		this.enumOptions = [{name:"Temp Sensor", options:["Option 1", "Option 2", "Option 3", "Option 4", "Option 5", "Option 6"]}]
+		this.rangeOptions = [{value: 5, maxVal: 100, minVal: 0, step: 1, name: "RIMS_TEMP_OFFSET"},
+		{value: 180, maxVal: 255, minVal: 0, step: 1, name: "RIMS_MAX_TEMPERATURE"},
+		{value: 190, maxVal: 255, minVal: 0, step: 1, name: "RIMS_ALARM_TEMPERATURE"}]
+	},
+	_masterChanged: function() {
+		console.log("master changed");
+	}
+});
+</script>

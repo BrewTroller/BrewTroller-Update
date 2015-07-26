@@ -1,0 +1,105 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="bower_components/neon-animation/neon-animations.html">
+
+<link rel="import" href="colors.html">
+
+<dom-module id="push-pages">
+	<style >
+		:host {
+			background: var(--bt-light-brown);
+			display:block;
+			position: relative;
+		}
+
+		:host > div {
+			position: relative;
+			height: 100%;
+		}
+
+		neon-animated-pages {
+			height: 375px;
+			margin-bottom: 10px;
+			margin-top: 10px;
+		}
+
+		.nav {
+			align-self: flex-end;
+			margin-top: -20px;
+			width: 100%;
+		}
+
+		paper-fab {
+			--paper-fab-background: var(--bt-light-orange);
+			margin: 0 10px 10px;
+		}
+
+		
+	</style>
+
+	<template>
+		<div class="flex layout vertical">
+			<neon-animated-pages id="pages" selected="{{selected}}" entry-animation="[[entryAnimation]]" exit-animation="[[exitAnimation]]">
+				<content></content>
+			</neon-animated-pages>
+			<div class="nav layout flex horizontal center-justified">
+				<div class="layout horizonal"><paper-fab start-justified icon="icons:arrow-back" id="prevBtn" on-click="_onPrevClick" elevation="5"></paper-fab></div>
+				<div class="layout horizontal"><paper-fab icon="icons:arrow-forward" id="nextBtn" on-click="_onNextClick" elevation="5"></paper-fab></div>
+			</div>
+		</div>
+	</template>
+
+<script>
+	Polymer({
+	is: 'push-pages',
+	properties: {
+		selected: Number
+	},
+
+	_mo : null,
+
+	_onPrevClick: function() {
+		this.entryAnimation = 'slide-from-left-animation';
+		this.exitAnimation = 'slide-right-animation';
+		this.$.pages.selectPrevious();
+		this._toggleButtons();
+		this.fire("pageChanged")
+	},
+	_onNextClick: function() {
+		this.entryAnimation = 'slide-from-right-animation';
+		this.exitAnimation = 'slide-left-animation';
+		this.$.pages.selectNext();
+		this._toggleButtons();
+	},
+	_toggleButtons: function() {
+		if (this.selected === 0) {
+			this.$.prevBtn.disabled = true;
+		} else {
+			this.$.prevBtn.disabled = false;
+		}
+
+		if (this.selected === this.$.pages.items.length - 1) {
+			this.$.nextBtn.disabled = true;
+		} else {
+			this.$.nextBtn.disabled = false;
+		}
+	},
+	ready: function() {
+		this.selected = 0;
+		this._toggleButtons();
+
+		var self = this;
+		this._mo = new MutationObserver(function(mutations) {
+			self._toggleButtons();
+		});
+		var config = { attributes: false, childList: true, characterData: false };
+		this._mo.observe(this.$.pages, config);
+	},
+});
+</script>
+
+</dom-module>

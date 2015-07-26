@@ -1,0 +1,67 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-styles/demo-pages.html">
+<link rel="import" href="bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="bower_components/paper-radio-button/paper-radio-button.html">
+
+<link rel="import" href="colors.html">
+
+
+<dom-module id="radio-option-panel">
+	<style>
+
+		:host {
+			background-color: white;
+    		padding: 24px;
+    		margin: 0 24px 24px 24px;
+    		display: inline-block;
+   			@apply(--shadow-elevation-2dp);
+   			
+		}
+		hr {
+			border: 0;
+			height: 1px;
+			background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
+			margin-bottom: 10px;
+		}
+		h2 {
+			margin-bottom: 5px;
+			margin-top: 0px;
+		}
+		paper-radio-group {
+			height: 80%;
+			flex-flow: column wrap;
+			
+			align-items: center;
+		}
+		paper-radio-button {
+			width: 130px;
+			--paper-radio-button-checked-color: var(--bt-light-orange);
+		}
+		#optionDesc {
+			position: absolute;
+			bottom: 0;
+			width: 95%;
+			opacity: 0.7;
+		}
+	</style>
+	<template>
+			<h2>{{optionTitle}}</h2><hr/>
+   			<paper-radio-group id="radioGroup" selected="{{selected}}" class="layout vertical flex">
+   				<template is="dom-repeat" items="{{options}}">
+   					<paper-radio-button name="{{item.name}}">{{item.name}}</paper-radio-button>
+   				</template>
+   			</paper-radio-group>
+   			<p id="optionDesc">{{optionDescription}}</p>
+   	</template>
+</dom-module>
+
+<script>
+Polymer({
+	is: 'radio-option-panel',
+	properties: {
+		seleted: String,
+		optionTitle: String,
+		optionDescription: String,
+	}
+});
+</script>

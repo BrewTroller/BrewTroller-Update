@@ -1,0 +1,145 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-item/all-imports.html">
+<link rel="import" href="bower_components/paper-styles/demo-pages.html">
+<link rel="import" href="bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html">
+
+<link rel="import" href="colors.html">
+
+<dom-module id="install-panel">
+	<style >
+
+		:host {
+			background-color: white;
+    		padding: 24px;
+    		margin: 0 24px 24px 24px;
+    		display: inline-block;
+   			@apply(--shadow-elevation-2dp);
+		}
+		hr {
+			border: 0;
+			height: 1px;
+			background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
+			margin-bottom: 50px;
+		}
+		h2 {
+			margin-bottom: 5px;
+			margin-top: 0px;
+		}
+		:host > div {
+			@apply(--layout-vertical);
+			align-items: center;
+		}
+		paper-item {
+			width: 275px;
+		}
+		paper-item span {
+			margin-right: 10px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			word-wrap: normal;
+			text-align: left;
+		}
+		paper-item paper-spinner {
+			position: absolute;
+		}
+		iron-icon.hidden {
+			opacity: 0 !important;
+		}
+		paper-item iron-icon {
+			position: absolute;
+			margin-top: 5px;
+			--iron-icon-height: 30px;
+			--iron-icon-width: 30px;
+			transition: opacity .5s;
+			opacity: 1;
+		}
+		paper-fab {
+			--paper-fab-background: var(--bt-light-orange);
+			margin-top: 30px;
+			opacity: 1;
+			transition: opacity 0.5s;
+		}
+		paper-fab.hidden {
+			opacity: 0 !important;
+			pointer-events: none !important;
+		}
+	</style>
+	<template>
+			<h2>Install</h2><hr/>
+        	<div class="list short">
+        		<paper-item>
+        			<span>Fetching Build from Server...</span>
+        			<paper-spinner id="fetchSpinner"></paper-spinner>
+        			<iron-icon id="fetchDone" class="hidden" icon="icons:done"></iron-icon>
+        		</paper-item>
+        		<paper-item>
+        			<span>Uploading to board...</span>
+        			<paper-spinner id="uploadSpinner"></paper-spinner>
+        			<iron-icon id="uploadDone" class="hidden" icon="icons:done">
+        		</iron-icon></paper-item>
+        	</div>
+        	<div class="layout horizontal"><paper-fab icon="icons:file-upload" id="uploadBtn" on-click="_uploadClick" elevation="5"></paper-fab>
+	</template>
+</dom-module>
+
+<script>
+Polymer({
+	is: 'install-panel',
+	properties: {
+		requestingBuild: {
+			type: Boolean,
+			observer: '_buildRequestChanged'
+		},
+		uploadingToBoard: {
+			type: Boolean,
+			observer: '_uploadStatusChange'
+		}
+	},
+	_uploadClick: function() {
+		//Fire beginUpload event
+		this.fire("beginFirmwareUpload", null, {bubbles: true, cancelable: false, node: this});
+		//Hide the dones
+		this.$.fetchDone.classList.add('hidden');
+		this.$.uploadDone.classList.add('hidden');
+	},
+	_buildRequestChanged: function(newVal, oldVal) {
+		this._updateButton();
+		//if we are requesting, set the spinner
+		if (newVal) {
+			this.$.fetchSpinner.active = true;
+			this.$.fetchDone.classList.add('hidden');
+		}
+		else if (oldVal && !newVal) {
+			this.$.fetchSpinner.active = false;
+			this.$.fetchDone.classList.remove('hidden');
+		}
+	},
+	_uploadStatusChange: function(newVal, oldVal) {
+		this._updateButton();
+		//If we are uploading, set the spinner
+		if (newVal) {
+			this.$.uploadSpinner.active = true;
+			this.$.uploadDone.classList.add('hidden');
+		}
+		else if (oldVal && !newVal) {
+			this.$.uploadSpinner.active = false;
+			this.$.uploadDone.classList.remove('hidden');
+		}
+	},
+	ready: function() {
+		this.uploadingToBoard = false;
+		this.requestingBuild = false;
+	},
+	_updateButton: function() {
+		if (this.requestingBuild == true || this.uploadingToBoard == true) {
+			this.$.uploadBtn.classList.add('hidden');
+		}
+		else {
+			this.$.uploadBtn.classList.remove('hidden');
+		}
+	}
+});
+</script>

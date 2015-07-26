@@ -1,0 +1,82 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-styles/demo-pages.html">
+<link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html">
+
+<link rel="import" href="colors.html">
+
+
+<dom-module id="switch-option-panel">
+	<style>
+
+		:host {
+			background-color: white;
+    		padding: 24px;
+    		margin: 0 24px 24px 24px;
+    		display: inline-block;
+   			@apply(--shadow-elevation-2dp);
+   			
+		}
+		hr {
+			border: 0;
+			height: 1px;
+			background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
+			margin-bottom: 10px;
+		}
+		h2 {
+			margin-bottom: 5px;
+			margin-top: 0px;
+		}
+		:host > div {
+			height: 80%;
+			flex-flow: column wrap;
+			justify-content: center;
+			align-items: center;
+		}
+		.line {
+        	margin-bottom: 40px;
+        	width: 225px;
+      	}
+
+      	.line span {
+        	margin-left: 10px;
+        	
+        	display: inline-block;
+      	}
+		paper-toggle-button {
+			--paper-toggle-button-checked-button-color: var(--bt-light-orange);
+			--paper-toggle-button-checked-bar-color: var(--bt-light-orange);
+			--paper-toggle-button-checked-ink-color: var(--bt-light-orange);
+			vertical-align: middle;
+		}
+		#optionDesc {
+			position: absolute;
+			bottom: 0;
+			width: 95%;
+			opacity: 0.7;
+		}
+	</style>
+	<template>
+			<h2>{{optionTitle}}</h2><hr/>
+   			<div class="layout vertical flex">
+   				<template is="dom-repeat" items="{{options}}">
+   					<div class="line"><paper-toggle-button checked="{{item.on}}"></paper-toggle-button><span>{{item.name}}</span></div>
+   				</template>
+   			</div>
+   			<p id="optionDesc">{{optionDescription}}</p>
+   	</template>
+</dom-module>
+
+<script>
+Polymer({
+	is: 'switch-option-panel',
+	properties: {
+		optionTitle: String,
+		optionDescription: String,
+		options: Array,
+	},
+	ready: function() {
+		this.options = [{name: "Secret Option 1", on: false}, {name: "test", on: false}, {name: "test2", on: false}, {name: "test3", on: false}, ];
+		this.optionDescription = "Testing option description, a;sdlfhaslkdfhkj ajlfakj awe aw efaklwjhf lkajwf lkawehfiabjadlkjalkjsdj clkajsd";
+	}
+});
+</script>
