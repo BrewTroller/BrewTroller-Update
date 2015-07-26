@@ -2,7 +2,7 @@
   "name": "btclient",
   "version": "0.1.0",
   "description": "BrewTroller Board Programmer",
-  "main": "index.html",
+  "main": "src/html/index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
