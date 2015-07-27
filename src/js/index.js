@@ -2,7 +2,8 @@ application = function() {
 
     var clientPaths = {
         "darwin": {
-            "x64": "./client/mac/BTClient-x64"
+            "x64": "./client/mac/BTClient-x64",
+            "ia32": "./client/mac/BTClient"
         },
         "win32": {
             "x64": "./client/win/BTClient-x64.exe",
@@ -22,65 +23,7 @@ application = function() {
             document.getElementById("loadingBackdrop").close();
         }
     }
-
-    var createRadioPanel = function(opt, optName) {
-        var radioOpts = [];
-        for (o in opt.available) {
-            radioOpts.push({"name": opt.available[o].pretty()});
-        }
-        //build a radio panel
-        var p = Polymer.Base.create('radio-option-panel', {
-            "id": optName + "Panel",
-            "options": radioOpts,
-            "optionTitle": opt.title || optName,
-            "optionDescription": opt.description || " "
-        });
-        p.selected = opt.default.pretty();
-
-        return p;
-    }
-
-    var createSwitchPanel = function(opt, optName) {
-        var switchOpts = [];
-        for (o in opt.options) {
-            var propName = Object.getOwnPropertyNames(opt.options[o])[0];
-            switchOpts.push({"name": propName.pretty(), on: opt.options[o][propName]})
-        }
-        //build the switch option panel
-        var s = Polymer.Base.create('switch-option-panel', {
-            "id": optName + "Panel",
-            "options": switchOpts,
-            "optionTitle": opt.title || optName,
-            "optionDescription": opt.description || " "
-        });
-        
-        return s;
-    }
-
-    var createSliderPanel = function(opt, optName) {
-        //Build the slider panel
-        var s = Polymer.Base.create('slider-option-panel', {
-            "id": optName + "Panel",
-            "value": opt.default,
-            "minVal": opt.min,
-            "maxVal": opt.max,
-            "step": opt.step,
-            "optionTitle": opt.title || optName,
-            "optionDescription": opt.description || " "
-        });
-
-        return s;
-    }
-
-    var createDepenendantPanelSet = function(optSet, setName) {
-        //Create the dependant option panel
-        var p = Polymer.Base.create('dependant-options-panel', {
-            "id": setName + "MasterPanel",
-            "optionDescription": opt.description,
-            "optionTitle": opt.title || setName,
-            
-        });
-    }
+    
 
     var opts = null;
     var optPanels = {};
@@ -89,7 +32,7 @@ application = function() {
         loadingOpts = false;
         var pushPages = document.getElementsByTagName("push-pages")[0]
         //setup option pages
-        for (prop in opts) {
+        /*for (prop in opts) {
             var opt = opts[prop];
             //handle radio group
             if (opt.hasOwnProperty('available')) {
@@ -122,6 +65,10 @@ application = function() {
             else if (opt.hasOwnProperty('masterOption')) {
                 var panels = createDepenendantPanelSet(opt);
             }
+        }*/
+        // Create Neon-Animatable wrapper for each panel, and insert into push pages
+        for (p in optPanels) {
+
         }
         //add the installer panel 
         var ip = document.createElement('install-panel');
@@ -136,7 +83,9 @@ application = function() {
     var installHandler = function() {
         //iterate over option panels and get user selcted values
         var options = {};
-        for (prop in optPanels) {
+
+        //TODO: Rebuild this logic to use cleaner option format
+        /*for (prop in optPanels) {
             var curr = optPanels[prop];
             if (curr.panel.tagName.toLowerCase() == "radio-option-panel") {
                 options[prop] = curr.panel.selected.ugly();
@@ -151,7 +100,7 @@ application = function() {
                     options[optName] = switches[sw].on;
                 }
             }
-        }
+        }*/
         //Get build from server
         var installPanel = document.getElementsByTagName('install-panel')[0];
         installPanel.requestingBuild = true;
@@ -277,13 +226,12 @@ application = function() {
     }
     xhr.send();
     
-    /*this.client = null;
+    
+    this.client = null;
     waitingOnBoards = true;
-    //Handle darwin 386, no way to build!
-    if (process.platform == 'darwin' && process.arch == 'ia32') {
-        handleClientError("32 Bit OS X is unsupported!")
-    }
-    else {
+    
+    //If we are running in the Node.js environment
+    if (typeof process != "undefined") {
         var spawn = require('child_process').spawn;
         //spawn a client instance
         this.client = spawn(clientPaths[process.platform][process.arch])
@@ -300,22 +248,25 @@ application = function() {
             console.log("client closed: " + code);
             this.client = null;
         });
-    }
-
-    var onClose = function(e) {
-        if (app.socket != null) {
-            app.socket.close();
-            app.socket = null;
+        
+        var onClose = function(e) {
+            if (app.socket != null) {
+                app.socket.close();
+                app.socket = null;
+            }
+            if (app.client != null) {
+                app.client.kill();
+                app.client = null;
+            }
+            this.close(true);
         }
-        if (app.client != null) {
-            app.client.kill();
-            app.client = null;
-        }
-        this.close(true);
+        var nw = require('nw.gui');
+        var win = nw.Window.get();
+        win.on('close', onClose);
     }
-    var nw = require('nw.gui');
-    var win = nw.Window.get();
-    win.on('close', onClose);*/
+    else {
+        waitingOnBoards = false;
+    }
 };
 
 var app = null;
