@@ -1,0 +1,43 @@
+[
+	{
+		"type": "radio",
+		"id": "BOARD",
+		"title": "Board Type",
+		"description": "Select the physical BrewTroller Board type you have.",
+		"options": [{"name": "BT 4 Pro", "value": "BT_4P"}, {"name": "OT DX1", "value": "OT_DX1"}],
+		"default": "BT 4 Pro"
+	},
+	// Dependants property is an array of embedded panel objects that will need to be hidden/shown when
+	// 		when the master option is toggled.
+	{
+		"type": "dependant",
+		"id": "RIMS",
+		"title": "Direct Fired RIMS",
+		"description": "Enable Direct Fired RIMS Support",
+		"master": {"name": "Direct Fired RIMS", "value": "RIMS", "default": false},
+		"dependants": [
+			"OTHER PANEL OBJECTS"
+		]
+	},
+	{
+		"type": "switch",
+		"id": "UI_SETTINGS",
+		"title": "UI Settings",
+		"description": "UI settings configuration options",
+		"options": [{"name": "Metric Units", "value":"USE_METRIC", "default": false}, {"name": "Troll Logo", "value": "LOGO_TROLL", "default": false}]
+	},
+	
+	//Slider values are all numbers, and depending on the option maybe fractional
+	//There is no built in way to express changes when user selects metric units!!!!
+	{
+		"type": "slider",
+		"id": "HLT_MAX_TEMP",
+		"title": "HLT Maximum Temperature",
+		"description": "Upper temperature limit for HLT heating.",
+		"default": 12,
+		"min": 0,
+		"max": 100,
+		"step": 1
+	}
+
+]
