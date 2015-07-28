@@ -1,5 +1,5 @@
 {
-  "name": "btclient",
+  "name": "BrewTroller Update",
   "version": "0.1.0",
   "description": "BrewTroller Board Programmer",
   "main": "src/html/index.html",
@@ -8,7 +8,7 @@
   },
   "single-instance": true,
   "window": {
-    "toolbar": true,
+    "toolbar": false,
     "width": 600,
     "height": 500,
     "position": "mouse",
