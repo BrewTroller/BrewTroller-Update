@@ -8,8 +8,10 @@ var createRadioPanel = function(opt) {
             "optionTitle": opt.title || opt.id,
             "optionDescription": opt.description || " "
         });
-
-        return p;
+        var na = Polymer.Base.create("neon-animatable", {});
+        Polymer.dom(na).appendChild(p);
+        
+        return {"panel": p, "wrapper": na, "option": opt};
     }
 
     var createSwitchPanel = function(opt) {
@@ -21,8 +23,10 @@ var createRadioPanel = function(opt) {
             "optionTitle": opt.title || opt.id,
             "optionDescription": opt.description || " "
         });
-        
-        return s;
+        var na = Polymer.Base.create("neon-animatable", {});
+        Polymer.dom(na).appendChild(s);
+
+        return {"panel": s, "wrapper": na, "option": opt};
     }
 
     var createSliderPanel = function(opt) {
@@ -36,8 +40,10 @@ var createRadioPanel = function(opt) {
             "optionTitle": opt.title || opt.id,
             "optionDescription": opt.description || " "
         });
+        var na = Polymer.Base.create("neon-animatable", {});
+        Polymer.dom(na).appendChild(s);
 
-        return s;
+        return {"panel": s, "wrapper": na, "option": opt};
     }
 
     var createDependantPanelSet = function(opt) {

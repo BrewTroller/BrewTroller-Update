@@ -1,4 +1,4 @@
-var createOptionsPanels = function(options) {
+var createOptionPanels = function(options) {
 	var panels = [];
 
 	for (opt in options) {
@@ -19,7 +19,7 @@ var createOptionsPanels = function(options) {
 				panel = createDependantPanelSet(option);
 		}
 
-		panels.push({"option": option, "panel": panel});
+		panels.push(panel);
 	}
 
 	return panels;
