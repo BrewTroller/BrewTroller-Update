@@ -17,5 +17,8 @@
     "polymer": "Polymer/polymer#^1.0.0",
     "paper-elements": "PolymerElements/paper-elements#~1.0.1",
     "paper-dropdown-select": "ericyanush/paper-dropdown-select"
+  },
+  "resolutions": {
+    "paper-slider": "97970077dcc52fba8f06f9155027e2ada592f960"
   }
 }
