@@ -32,41 +32,6 @@ application = function() {
         loadingOpts = false;
         var pushPages = document.getElementsByTagName("push-pages")[0]
         //setup option pages
-        /*for (prop in opts) {
-            var opt = opts[prop];
-            //handle radio group
-            if (opt.hasOwnProperty('available')) {
-                var panel = createRadioPanel(opt, prop);
-                var na = Polymer.Base.create('neon-animatable', {})
-                Polymer.dom(na).appendChild(panel);
-                Polymer.dom(pushPages).appendChild(na);
-
-                optPanels[prop] = {"opt": opt, "panel": panel};
-            }
-            //handle switch panels
-            else if (opt.hasOwnProperty('options')) {
-                var panel = createSwitchPanel(opt, prop);
-                var na = Polymer.Base.create('neon-animatable', {});
-                Polymer.dom(na).appendChild(panel);
-                Polymer.dom(pushPages).appendChild(na);
-
-                optPanels[prop] = {"opt": opt, "panel": panel};
-            }
-            //handle slider panels
-            else if (opt.hasOwnProperty('range')) {
-                var panel = createSliderPanel(opt, prop);
-                var na = Polymer.Base.create('neon-animatable', {});
-                Polymer.dom(na).appendChild(panel);
-                Polymer.dom(pushPages).appendChild(na);
-
-                optPanels[prop] = {"opt": opt, "panel": panel};
-            }
-            //handle dependant option panels
-            else if (opt.hasOwnProperty('masterOption')) {
-                var panels = createDepenendantPanelSet(opt);
-            }
-        }*/
-        // Create Neon-Animatable wrapper for each panel, and insert into push pages
         optPanels = createOptionPanels(options);
         //insert each panel
         for (p in optPanels) {
