@@ -67,8 +67,14 @@ application = function() {
             }
         }*/
         // Create Neon-Animatable wrapper for each panel, and insert into push pages
+        optPanels = createOptionPanels(options);
+        //insert each panel
         for (p in optPanels) {
-
+            Polymer.dom(pushPages).appendChild(optPanels[p].wrapper);
+            if (optPanels[p].hasOwnProperty("dependants")) {
+                Polymer.dom.flush();
+                optPanels[p].setup();
+            }
         }
         //add the installer panel 
         var ip = document.createElement('install-panel');
@@ -213,7 +219,8 @@ application = function() {
 
     //kickoff options pull from server
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://build.brewtroller.com:8080/options", true);
+    //xhr.open("GET", "http://build.brewtroller.com:8080/options", true);
+    xhr.open("GET", "../../options.json.example", true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) {
             if (xhr.status == 200) {
