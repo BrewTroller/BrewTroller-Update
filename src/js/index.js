@@ -53,25 +53,8 @@ application = function() {
 
     var installHandler = function() {
         //iterate over option panels and get user selcted values
-        var options = {};
+        var options = collectOptions(optPanels);
 
-        //TODO: Rebuild this logic to use cleaner option format
-        /*for (prop in optPanels) {
-            var curr = optPanels[prop];
-            if (curr.panel.tagName.toLowerCase() == "radio-option-panel") {
-                options[prop] = curr.panel.selected.ugly();
-            }
-            else if (curr.panel.tagName.toLowerCase() == "slider-option-panel") {
-                options[prop] = curr.panel.value;
-            } 
-            else if (curr.panel.tagName.toLowerCase() == "switch-option-panel") {
-                var switches = curr.panel.options;
-                for (sw in switches) {
-                    var optName = switches[sw].name.ugly();
-                    options[optName] = switches[sw].on;
-                }
-            }
-        }*/
         //Get build from server
         var installPanel = document.getElementsByTagName('install-panel')[0];
         installPanel.requestingBuild = true;
@@ -190,7 +173,7 @@ application = function() {
     //xhr.open("GET", "../../options.json.example", true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) {
-            if (xhr.status == 200) {
+            if (xhr.status == 200 || xhr.status == 0) {
                 loadOptions(JSON.parse(xhr.responseText));
             }
             else {

@@ -1,7 +1,7 @@
 #BrewTroller Update
 BrewTroller update is a new Desktop application designed to make updating your BrewTroller's firmware easier than BrewTroller makes brewing beer!
 
-**_Warning_**: This utility is currently in a pre-alpha stage, and it likely contains some bugs that may cause the utility to appear either drunk.
+**_Warning_**: This utility is currently in a pre-alpha stage, and it likely contains some bugs that may cause the utility to appear drunk.
 
 ##Motivation
 Since the inception of the BrewTroller project installing or updating the firmware on your board has required the installation of the Arduino IDE, and has generally been geared for people who have some coding experience. This utility aims to make this task less painful than the moment when that keg of your new favorite homebrew kicks.  
