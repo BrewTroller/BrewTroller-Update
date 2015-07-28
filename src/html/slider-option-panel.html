@@ -46,7 +46,7 @@
 	</style>
 	<template>
 			<h2>{{optionTitle}}</h2><hr/>
-   			<div class="layout vertical flex center-center"><paper-slider pin value="{{value}}" max="{{maxVal}}" min="{{minVal}}" step="{{step}}" editable></paper-slider></div>
+   			<div id="slider" class="layout vertical flex center-center"><paper-slider pin editable="true" max="{{maxVal}}" min="{{minVal}}" step="{{step}}" value="{{value}}" max></paper-slider></div>
    			<p id="optionDesc">{{optionDescription}}</p>
    	</template>
 </dom-module>
@@ -61,9 +61,6 @@ Polymer({
 		step: Number,
 		optionTitle: String,
 		optionDescription: String,
-	},
-	ready: function() {
-		this.optionDescription = "Testing option description, a;sdlfhaslkdfhkj ajlfakj awe aw efaklwjhf lkajwf lkawehfiabjadlkjalkjsdj clkajsd";
 	}
 });
 </script>

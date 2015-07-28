@@ -4,10 +4,10 @@ var createRadioPanel = function(opt) {
         var p = Polymer.Base.create('radio-option-panel', {
             "id": opt.id + "Panel",
             "options": opt.options,
+            "selected": opt.default,
             "optionTitle": opt.title || opt.id,
             "optionDescription": opt.description || " "
         });
-        p.selected = opt.default
 
         return p;
     }
@@ -29,7 +29,7 @@ var createRadioPanel = function(opt) {
         //Build the slider panel
         var s = Polymer.Base.create('slider-option-panel', {
             "id": opt.id + "Panel",
-            "value": opt.default,
+            "value": opt.value,
             "minVal": opt.min,
             "maxVal": opt.max,
             "step": opt.step,
