@@ -184,8 +184,10 @@ application = function() {
 
     //kickoff options pull from server
     var xhr = new XMLHttpRequest();
-    //xhr.open("GET", "http://build.brewtroller.com:8080/options", true);
-    xhr.open("GET", "../../options.json.example", true);
+    xhr.open("GET", "http://build.brewtroller.com:8080/options", true);
+    
+    //Use this file for testing!
+    //xhr.open("GET", "../../options.json.example", true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) {
             if (xhr.status == 200) {
@@ -196,7 +198,13 @@ application = function() {
             }
         }
     }
+    //Timeout the request after 10s, as the server maybe down
+    xhr.timeout = 10000;
+    xhr.ontimeout = function() {
+        handleServerError();
+    }
     xhr.send();
+    loadingOpts = true;
     
     
     this.client = null;
