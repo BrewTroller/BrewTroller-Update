@@ -34,7 +34,7 @@ var retrieveDependantOptions = function(cachedOpt) {
 				case "switch":
 					for (var j = 0; j < curr.option.options.length; i++) {
 						var currSw = curr.option.options[i];
-						depOpts[currSw.optName] = currSw.on;
+						depOpts[currSw.optName] = currSw.on ? "ON" : "OFF";
 					}
 					break;
 				case "slider":
@@ -64,7 +64,7 @@ var collectOptions = function(optionPanels) {
 			case "switch":
 				for (var i = 0; i < cachedOpt.option.options.length; i++) {
 					var curr = cachedOpt.option.options[i];
-					selections[curr.optName] = curr.on;
+					selections[curr.optName] = curr.on ? "ON" : "OFF";
 				}
 				break;
 			case "slider":
