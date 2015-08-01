@@ -24,3 +24,19 @@ var createOptionPanels = function(options) {
 
 	return panels;
 };
+
+var createVersionsPanel = function(optionsManifest) {
+	var versions = [];
+	for (ver in optionsManifest) {
+		versions.push({"name": ver, "optName": ver});
+	}
+
+	var opt = {
+		"id": "BuildVersion",
+		"title": "Firmware Version",
+		"description": "Select the firmware version you want to install to your BrewTroller",
+		"options": versions
+	}
+
+	return createRadioPanel(opt);
+};

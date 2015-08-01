@@ -1,54 +1,57 @@
-[
-	{
-		"type": "radio",
-		"id": "BOARD",
-		"title": "Board Type",
-		"description": "Select the physical BrewTroller Board type you have.",
-		"options": [{"name": "BT 4 Pro", "optName": "BT_4P"}, {"name": "OT DX1", "optName": "OT_DX1"}],
-		"default": "BT 4 Pro"
-	},
-	{
-		"type": "// Dependants property is an array of embedded panel objects that will need to be hidden/shown when the master option is toggled.",
-		"type": "dependant",
-		"id": "RIMS",
-		"title": "Direct Fired RIMS",
-		"description": "Enable Direct Fired RIMS Support",
-		"master": {"name": "Direct Fired RIMS", "value": "RIMS", "on": false},
-		"options": "//These are the options that appear on the master option page",
-		"options": "// Note the exlusion of Enum type options, as the dropdown selector used on the master panel does not properly handle the application view bounds, and can overflow options off the screen",
-		"options": {
-			"bool": [{"name": "RIMS During Sparge", "optName":"RIMS_SPARGE", "default": false}],
-			"slider": [{"name": "RIMS Temperature Alarm", "optName": "RIMS_TEMP_ALARM", "value": 180, "min": 0, "max": 255, "step": 1}]
+{
+	
+	"v3.0.0": 
+	[
+		{
+			"type": "radio",
+			"id": "BOARD",
+			"title": "Board Type",
+			"description": "Select the physical BrewTroller Board type you have.",
+			"options": [{"name": "BT 4 Pro", "optName": "BT_4P"}, {"name": "OT DX1", "optName": "OT_DX1"}],
+			"default": "BT 4 Pro"
 		},
-		"dependants": [
-			{
-				"type": "radio",
-				"id": "RIMS_TEMP_SENSOR",
-				"title": "Direct Fired RIMS Temperature Sensor",
-				"description": "Select the temperature sensor you would like to use for your RIMS heat exchanger",
-				"options": [{"name": "Aux 1", "optName":"AUX1"}, {"name": "Aux 2", "optName": "AUX2"}],
-				"default": "Aux 1"
-			}
-		]
-	},
-	{
-		"type": "switch",
-		"id": "UI_SETTINGS",
-		"title": "UI Settings",
-		"description": "UI settings configuration options",
-		"options": [{"name": "Metric Units", "optName":"USE_METRIC", "on": false}, {"name": "Troll Logo", "optName": "LOGO_TROLL", "on": false}]
-	},
-	{
-		"type": "//Slider values are all numbers, and depending on the option maybe fractional",
-		"type": "//There is no built in way to express changes when user selects metric units!!!!",
-		"type": "slider",
-		"id": "HLT_MAX_TEMP", 
-		"title": "HLT Maximum Temperature",
-		"description": "Upper temperature limit for HLT heating.",
-		"value": 88,
-		"min": 0,
-		"max": 255,
-		"step": 1
-	}
-
-]
+		{
+			"type": "// Dependants property is an array of embedded panel objects that will need to be hidden/shown when the master option is toggled.",
+			"type": "dependant",
+			"id": "RIMS",
+			"title": "Direct Fired RIMS",
+			"description": "Enable Direct Fired RIMS Support",
+			"master": {"name": "Direct Fired RIMS", "value": "RIMS", "on": false},
+			"options": "//These are the options that appear on the master option page",
+			"options": "// Note the exlusion of Enum type options, as the dropdown selector used on the master panel does not properly handle the 	application view bounds, and can overflow options off the screen",
+			"options": {
+				"bool": [{"name": "RIMS During Sparge", "optName":"RIMS_SPARGE", "default": false}],
+				"slider": [{"name": "RIMS Temperature Alarm", "optName": "RIMS_TEMP_ALARM", "value": 180, "min": 0, "max": 255, "step": 1}]
+			},
+			"dependants": [
+				{
+					"type": "radio",
+					"id": "RIMS_TEMP_SENSOR",
+					"title": "Direct Fired RIMS Temperature Sensor",
+					"description": "Select the temperature sensor you would like to use for your RIMS heat exchanger",
+					"options": [{"name": "Aux 1", "optName":"AUX1"}, {"name": "Aux 2", "optName": "AUX2"}],
+					"default": "Aux 1"
+				}
+			]
+		},
+		{
+			"type": "switch",
+			"id": "UI_SETTINGS",
+			"title": "UI Settings",
+			"description": "UI settings configuration options",
+			"options": [{"name": "Metric Units", "optName":"USE_METRIC", "on": false}, {"name": "Troll Logo", "optName": "LOGO_TROLL", "on": false}]
+		},
+		{
+			"type": "//Slider values are all numbers, and depending on the option maybe fractional",
+			"type": "//There is no built in way to express changes when user selects metric units!!!!",
+			"type": "slider",
+			"id": "HLT_MAX_TEMP", 
+			"title": "HLT Maximum Temperature",
+			"description": "Upper temperature limit for HLT heating.",
+			"value": 88,
+			"min": 0,
+			"max": 255,
+			"step": 1
+		}
+	]
+}

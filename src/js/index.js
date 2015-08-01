@@ -26,14 +26,26 @@ application = function() {
     
 
     var opts = null;
+    var verPanel = null;
     var optPanels = {};
-    var loadOptions = function(options) {
-        opts = options;
-        loadingOpts = false;
-        var pushPages = document.getElementsByTagName("push-pages")[0]
-        //setup option pages
-        optPanels = createOptionPanels(options);
-        //insert each panel
+    var installPanel = null;
+    var versionSelection = function(e) {
+        var targetVer = e.detail.newVal;
+
+        //remove all options panels, except info panel and version panel
+        var pushPages = document.getElementsByTagName("push-pages")[0];
+        for (p in optPanels) {
+            Polymer.dom(pushPages).removeChild(optPanels[p].wrapper);
+            delete optPanels[p];
+        }
+        //remove install panel to make inserting option panels easier
+        if (installPanel.parentNode) {
+            Polymer.dom(pushPages).removeChild(installPanel);
+        }
+
+        //Create new option panels
+        optPanels = createOptionPanels(opts[targetVer]);
+        //insert each option panel
         for (p in optPanels) {
             Polymer.dom(pushPages).appendChild(optPanels[p].wrapper);
             if (optPanels[p].hasOwnProperty("dependants")) {
@@ -41,12 +53,26 @@ application = function() {
                 optPanels[p].setup();
             }
         }
+        // add the install panel
+        Polymer.dom(pushPages).appendChild(installPanel);
+    }
+
+    var loadOptions = function(options) {
+        opts = options;
+        loadingOpts = false;
+        var pushPages = document.getElementsByTagName("push-pages")[0];
+        //setup verion option
+        verPanel = createVersionsPanel(options);
+        //setup listener to create rest of options panels
+        verPanel.panel.addEventListener("selectionChange", versionSelection)
+        Polymer.dom(pushPages).appendChild(verPanel.wrapper);
+        
         //add the installer panel 
         var ip = document.createElement('install-panel');
-        var na = document.createElement('neon-animatable');
-        na.appendChild(ip);
+        installPanel = document.createElement('neon-animatable');
+        installPanel.appendChild(ip);
         ip.addEventListener("beginFirmwareUpload", installHandler);
-        Polymer.dom(pushPages).appendChild(na);
+
         //handle overlay
         handleOverlay();
     }
@@ -54,6 +80,8 @@ application = function() {
     var installHandler = function() {
         //iterate over option panels and get user selcted values
         var options = collectOptions(optPanels);
+        //Add build version
+        options["BuildVersion"] = verPanel.panel.selected;
 
         //Get build from server
         var installPanel = document.getElementsByTagName('install-panel')[0];

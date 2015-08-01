@@ -46,7 +46,7 @@
 	</style>
 	<template>
 			<h2>{{optionTitle}}</h2><hr/>
-   			<paper-radio-group id="radioGroup" selected="{{selected}}" class="layout vertical flex">
+   			<paper-radio-group id="radioGroup" selected="{{selected}}" class="layout vertical flex" on-paper-radio-group-changed="_selectionChange">
    				<template is="dom-repeat" items="{{options}}">
    					<paper-radio-button name="{{item.name}}">{{item.name}}</paper-radio-button>
    				</template>
@@ -62,6 +62,10 @@ Polymer({
 		seleted: String,
 		optionTitle: String,
 		optionDescription: String,
+	},
+	_selectionChange: function() {
+		this.fire("selectionChange", 
+			{"newVal": this.selected});
 	}
 });
 </script>
