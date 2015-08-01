@@ -124,7 +124,7 @@ application = function() {
                 var statusParts = m[0].Status.split("\t");
                 info.port = m[0].Port;
                 info.board = "Unable to detect board version";
-                info.firmware = statusParts[3] + "." + statusParts[4];
+                info.firmware = statusParts[3] + (statusParts[4] == "0" ? "" : ("." + statusParts[4]));
                 handleOverlay();
                 device = m[0].Port;
             }
