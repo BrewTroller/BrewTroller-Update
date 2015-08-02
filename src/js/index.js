@@ -2,16 +2,16 @@ application = function() {
 
     var clientPaths = {
         "darwin": {
-            "x64": "./client/mac/BTClient-x64",
-            "ia32": "./client/mac/BTClient"
+            "x64": "/client/mac/BTClient-x64",
+            "ia32": "/client/mac/BTClient"
         },
         "win32": {
-            "x64": "./client/win/BTClient-x64.exe",
-            "ia32": "./client/win/BTClient.exe"
+            "x64": "/client/win/BTClient-x64.exe",
+            "ia32": "/client/win/BTClient.exe"
         },
         "linux": {
-            "x64": "./client/linux/BTClient-x64",
-            "ia32": "./client/linux/BTClient"
+            "x64": "/client/linux/BTClient-x64",
+            "ia32": "/client/linux/BTClient"
         }
     };
 

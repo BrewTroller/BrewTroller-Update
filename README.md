@@ -17,3 +17,5 @@ Since the inception of the BrewTroller project installing or updating the firmwa
 1. This project uses a Go binary to actually communicate with your BrewTroller board. Currently the compiled binaries for each architecture are included in this repository, until we release the source code for the communication binary.
 2. In order for your computer to communicate with your BrewTroller you may need to install a driver from FTDI. Most _recent_ operating systems either include this driver, or automatically install it for you.
 3. This utility does not actually compile the BrewTroller firmware on your computer! It utilizes a cloud compiler service that we have brewed up, and it is also in pre-alpha stage. Until this utility moves into a release state, the cloud compiler service may not always be available.
+4. Use of this utility on Linux requires your user be added to the `dialout` group. This may be accomplished with the command `$ sudo usermod -a -G dialout YOUR_USER_NAME`
+
