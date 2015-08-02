@@ -223,9 +223,15 @@ application = function() {
     
     //If we are running in the Node.js environment
     if (typeof process != "undefined") {
+        //Ensure that the executables have permission to execute
+        var cwd = process.cwd();
+        var executable =  cwd + clientPaths[process.platform][process.arch];
+        var fs = require('fs');
+        fs.chmodSync(executable, 0777);
+
         var spawn = require('child_process').spawn;
         //spawn a client instance
-        this.client = spawn(clientPaths[process.platform][process.arch])
+        this.client = spawn(executable);
         this.client.stdout.on('data', function(data){
             if (clientPort == null) {
                 handleClientSpawn(Number(data));
