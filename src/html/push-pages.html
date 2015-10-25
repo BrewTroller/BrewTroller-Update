@@ -47,8 +47,8 @@
 				<content></content>
 			</neon-animated-pages>
 			<div class="nav layout flex horizontal center-justified">
-				<div class="layout horizonal"><paper-fab start-justified icon="icons:arrow-back" id="prevBtn" on-click="_onPrevClick" elevation="5"></paper-fab></div>
-				<div class="layout horizontal"><paper-fab icon="icons:arrow-forward" id="nextBtn" on-click="_onNextClick" elevation="5"></paper-fab></div>
+				<div class="layout horizonal"><paper-fab start-justified icon="icons:arrow-back" id="prevBtn" on-click="_onPrevClick" elevation="5" disabled="[[_prevBtnDisabled(selected)]]"></paper-fab></div>
+				<div class="layout horizontal"><paper-fab icon="icons:arrow-forward" id="nextBtn" on-click="_onNextClick" elevation="5" disabled="[[_nextBtnDisabled(selected, pageCount)]]"></paper-fab></div>
 			</div>
 		</div>
 	</template>
@@ -57,7 +57,8 @@
 	Polymer({
 	is: 'push-pages',
 	properties: {
-		selected: Number
+		selected: Number,
+		pageCount: Number
 	},
 
 	_mo : null,
@@ -66,35 +67,25 @@
 		this.entryAnimation = 'slide-from-left-animation';
 		this.exitAnimation = 'slide-right-animation';
 		this.$.pages.selectPrevious();
-		this._toggleButtons();
 		this.fire("pageChanged")
 	},
 	_onNextClick: function() {
 		this.entryAnimation = 'slide-from-right-animation';
 		this.exitAnimation = 'slide-left-animation';
 		this.$.pages.selectNext();
-		this._toggleButtons();
 	},
-	_toggleButtons: function() {
-		if (this.selected === 0) {
-			this.$.prevBtn.disabled = true;
-		} else {
-			this.$.prevBtn.disabled = false;
-		}
-
-		if (this.selected === this.$.pages.items.length - 1) {
-			this.$.nextBtn.disabled = true;
-		} else {
-			this.$.nextBtn.disabled = false;
-		}
+	_nextBtnDisabled: function(selected, itemCount) {
+		return selected == (this.$.pages.items.length - 1);
+	},
+	_prevBtnDisabled: function(selected) {
+		return selected == 0;
 	},
 	ready: function() {
 		this.selected = 0;
-		this._toggleButtons();
-
+		
 		var self = this;
 		this._mo = new MutationObserver(function(mutations) {
-			self._toggleButtons();
+			self.pageCount = self.$.pages.items.length;
 		});
 		var config = { attributes: false, childList: true, characterData: false };
 		this._mo.observe(this.$.pages, config);
