@@ -88,7 +88,7 @@ application = function() {
         installPanel.requestingBuild = true;
         //Get build from server
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://build.brewtroller.com:8080/build", true);
+        xhr.open("POST", "http://build.brewtroller.net:8080/build", true);
         xhr.responseType = "json";
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) {
@@ -195,7 +195,7 @@ application = function() {
 
     //kickoff options pull from server
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://build.brewtroller.com:8080/options", true);
+    xhr.open("GET", "http://build.brewtroller.net:8080/options", true);
     
     //Use this file for testing!
     //xhr.open("GET", "../../options.json.example", true);
