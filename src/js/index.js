@@ -17,12 +17,6 @@ application = function() {
 
     var loadingOpts = false;
     var waitingOnBoards = false;
-
-    var handleOverlay = function() {
-        if (!loadingOpts && !waitingOnBoards) {
-            document.getElementById("loadingBackdrop").close();
-        }
-    }
     
 
     var opts = null;
@@ -72,9 +66,6 @@ application = function() {
         installPanel = document.createElement('neon-animatable');
         installPanel.appendChild(ip);
         ip.addEventListener("beginFirmwareUpload", installHandler);
-
-        //handle overlay
-        handleOverlay();
     }
 
     var installHandler = function() {
@@ -113,8 +104,7 @@ application = function() {
         overlay.removeChild(spinner);
         overlay.querySelector("span").innerHTML = "Error contacting BrewTroller Build Server.<br/>Check your network connection or try again later."
         //reset the overlay sizing
-        overlay.close();
-        overlay.open();
+        overlay.refit();
     }
 
     var handleClientError = function(err) {
@@ -125,8 +115,7 @@ application = function() {
         }
         overlay.querySelector("span").innerHTML = err
         //reset the overlay sizing
-        overlay.close();
-        overlay.open();
+        overlay.refit();
     }
 
     var device = null;
@@ -137,13 +126,18 @@ application = function() {
                 //Got no boards, show error
                 var overlay = document.getElementById("loadingBackdrop");
                 var spinner = document.getElementById("loadingSpinner");
-                if (spinner != null) {
-                    overlay.removeChild(spinner);
+                if (spinner.active ) {
+                    spinner.active = false;
+                    spinner.style.display = "none";
+
                 }
-                overlay.querySelector("span").innerHTML = "No BrewTrollers Dectected.<br/>Check connections and try again."
+                overlay.querySelector("span").innerHTML = "No BrewTrollers Dectected.<br/>Check connections, and board power.<br/>Search will automatically retry."
                 //reset the overlay sizing
-                overlay.close();
-                overlay.open();
+                overlay.refit();
+                //Check for more boards in 5 seconds
+                Polymer.Base.async(function() {
+                    scanForBoards.call(app);   
+                }, 5000);
             }
             else {
                 //use first board
@@ -153,7 +147,7 @@ application = function() {
                 info.port = m[0].Port;
                 info.board = "Unable to detect board version";
                 info.firmware = statusParts[3] + (statusParts[4] == "0" ? "" : ("." + statusParts[4]));
-                handleOverlay();
+                document.getElementById("loadingBackdrop").close();
                 device = m[0].Port;
             }
         } else {
@@ -175,8 +169,32 @@ application = function() {
     }
 
     var scanForBoards = function() {
-        var message = {"type": "1"};
-        this.socket.send(JSON.stringify(message));
+        //If the socket isn't open, do nothing
+        if (!this.socket || !this.socket.OPEN) { 
+            return;
+        }
+        var spinner = document.getElementById("loadingSpinner");
+        var overlay = document.getElementById("loadingBackdrop");
+        
+        //Ensure that we have the display setup correctly to show that we are scanning
+        overlay.querySelector("span").innerHTML = "Searching for BrewTrollers...";            
+        spinner.style.display = "";
+        overlay.refit();
+        spinner.reset();
+        spinner.active = true;
+        waitingOnBoards = true;
+
+        //call timeout on scan after 3 seconds,
+        //  we do this because the scan happens so fast the user can't actually
+        //  see that anything is happening
+        var sendScanMessage = function() {
+            var message = {"type": "1"};
+            this.socket.send(JSON.stringify(message));
+        }
+        var self = this;
+        Polymer.Base.async(function() {
+            sendScanMessage.call(self);
+        }, 3000);   
     }
 
     this.socket = null;
@@ -187,7 +205,7 @@ application = function() {
         }
         app.socket.onopen = function(){
             //Scan for boards
-            scanForBoards.bind(app)();
+            scanForBoards.call(app);
         }
     }
 

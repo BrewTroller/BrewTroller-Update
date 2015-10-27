@@ -1,6 +1,6 @@
 {
   "name": "BrewTroller Update",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "BrewTroller Board Programmer",
   "main": "src/html/index.html",
   "scripts": {
