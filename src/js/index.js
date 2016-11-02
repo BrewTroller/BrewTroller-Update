@@ -144,11 +144,11 @@ application = function() {
                 waitingOnBoards = false;
                 var info = document.getElementsByTagName('info-panel')[0];
                 var statusParts = m[0].Status.split("\t");
-                info.port = m[0].Port;
+                info.port = m[0].PortId;
                 info.board = "Unable to detect board version";
                 info.firmware = statusParts[3] + (statusParts[4] == "0" ? "" : ("." + statusParts[4]));
                 document.getElementById("loadingBackdrop").close();
-                device = m[0].Port;
+                device = m[0].PortId;
             }
         } else {
             if (m.hasOwnProperty("flash")) {
