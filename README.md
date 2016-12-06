@@ -9,9 +9,17 @@ Since the inception of the BrewTroller project installing or updating the firmwa
 ##Development Requirements
 - Node.js
     - npm
+    - polymer-cli
     - bower
+    - webcomponentsjs
 - Node-webkit
     - nw-builder
+    
+##Local Environment Notes
+Make sure to install node first, then install the following packages:
+    - npm install -g bower
+    - npm install -g polymer-cli
+    - bower install webcomponentsjs
 
 ##Notes
 1. This project uses a Go binary to actually communicate with your BrewTroller board. Currently the compiled binaries for each architecture are included in this repository, until we release the source code for the communication binary.
