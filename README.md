@@ -20,6 +20,7 @@ Make sure to install node first, then install the following packages:
     - npm install -g bower
     - npm install -g polymer-cli
     - bower install webcomponentsjs
+    - npm install -g nw-builder
 
 ##Notes
 1. This project uses a Go binary to actually communicate with your BrewTroller board. Currently the compiled binaries for each architecture are included in this repository, until we release the source code for the communication binary.
