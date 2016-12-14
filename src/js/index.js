@@ -17,7 +17,7 @@ application = function() {
 
     var loadingOpts = false;
     var waitingOnBoards = false;
-    
+
 
     var opts = null;
     var verPanel = null;
@@ -60,8 +60,8 @@ application = function() {
         //setup listener to create rest of options panels
         verPanel.panel.addEventListener("selectionChange", versionSelection)
         Polymer.dom(pushPages).appendChild(verPanel.wrapper);
-        
-        //add the installer panel 
+
+        //add the installer panel
         var ip = document.createElement('install-panel');
         installPanel = document.createElement('neon-animatable');
         installPanel.appendChild(ip);
@@ -87,8 +87,8 @@ application = function() {
                     if (xhr.response.hasOwnProperty('binary')) {
                         installPanel.uploadingToBoard = true;
                         installPanel.requestingBuild = false;
-                        app.socket.send(JSON.stringify({"type": "2", "device": device, "payload": xhr.response.binary})); 
-                        return; 
+                        app.socket.send(JSON.stringify({"type": "2", "device": device, "payload": xhr.response.binary}));
+                        return;
                     }
                 }
                 handleServerError(xhr.response, xhr.status);
@@ -136,7 +136,7 @@ application = function() {
                 overlay.refit();
                 //Check for more boards in 5 seconds
                 Polymer.Base.async(function() {
-                    scanForBoards.call(app);   
+                    scanForBoards.call(app);
                 }, 5000);
             }
             else {
@@ -162,7 +162,7 @@ application = function() {
                         overlay.removeChild(loadingSpinner);
                     }
                     overlay.querySelector("span").innerHTML = "Error flashing Board!:<br/>" + m.flash;
-                    overlay.open();   
+                    overlay.open();
                 }
             }
         }
@@ -170,17 +170,17 @@ application = function() {
 
     var scanForBoards = function() {
         //If the socket isn't open, do nothing
-        if (!this.socket || !this.socket.OPEN) { 
+        if (!this.socket || !this.socket.OPEN) {
             return;
         }
         var spinner = document.getElementById("loadingSpinner");
         var overlay = document.getElementById("loadingBackdrop");
-        
+
         //Ensure that we have the display setup correctly to show that we are scanning
-        overlay.querySelector("span").innerHTML = "Searching for BrewTrollers...";            
+        overlay.querySelector("span").innerHTML = "Searching for BrewTrollers...";
         spinner.style.display = "";
         overlay.refit();
-        spinner.reset();
+        //spinner.reset();
         spinner.active = true;
         waitingOnBoards = true;
 
@@ -194,7 +194,7 @@ application = function() {
         var self = this;
         Polymer.Base.async(function() {
             sendScanMessage.call(self);
-        }, 3000);   
+        }, 3000);
     }
 
     this.socket = null;
@@ -214,7 +214,7 @@ application = function() {
     //kickoff options pull from server
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "http://build.brewtroller.net:8080/options", true);
-    
+
     //Use this file for testing!
     //xhr.open("GET", "../../options.json.example", true);
     xhr.onreadystatechange = function() {
@@ -234,11 +234,11 @@ application = function() {
     }
     xhr.send();
     loadingOpts = true;
-    
-    
+
+
     this.client = null;
     waitingOnBoards = true;
-    
+
     //If we are running in the Node.js environment
     if (typeof process != "undefined") {
         //Ensure that the executables have permission to execute
@@ -256,14 +256,14 @@ application = function() {
             }
         });
         this.client.stderr.on('data', function(data) {
-            console.log("err: " + data); 
+            console.log("err: " + data);
             handleClientError(data);
         });
         this.client.on('close', function(code){
             console.log("client closed: " + code);
             this.client = null;
         });
-        
+
         var onClose = function(e) {
             if (app.socket != null) {
                 app.socket.close();

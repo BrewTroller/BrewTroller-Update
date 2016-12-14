@@ -10,3 +10,16 @@
 body {
 	padding: 0px !important;
 }
+
+.switch-option-panel-0 paper-toggle-button.switch-option-panel {
+	float: left;
+}
+.install-panel-0 paper-fab.install-panel {
+	margin-left: 50%;
+}
+.install-panel-0 paper-item.install-panel iron-icon.install-panel {
+	position: relative;
+}
+.install-panel-0 paper-item.install-panel paper-spinner.install-panel {
+	position: relative;
+}
