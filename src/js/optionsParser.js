@@ -15,6 +15,9 @@ var createOptionPanels = function(options) {
 			case "slider":
 				panel = createSliderPanel(option);
 				break;
+			case "dropdown":
+				panel = createDropdownPanel(option);
+				break;
 			case "dependant":
 				panel = createDependantPanelSet(option);
 		}

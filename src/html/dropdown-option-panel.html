@@ -1,0 +1,80 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/demo-pages.html">
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="colors.html">
+
+
+<dom-module id="slider-dropdown-panel">
+	<style>
+
+		:host {
+			background-color: white;
+    		padding: 24px;
+    		margin: 0 24px 24px 24px;
+    		display: inline-block;
+   			@apply(--shadow-elevation-2dp);
+
+		}
+		hr {
+			border: 0;
+			height: 1px;
+			background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
+			margin-bottom: 10px;
+		}
+		h2 {
+			margin-bottom: 5px;
+			margin-top: 0px;
+		}
+
+		:host > div {
+			height: 75%;
+		}
+
+		paper-slider {
+			width: 75%;
+			--paper-slider-knob-color: var(--bt-light-orange);
+      		--paper-slider-active-color: var(--bt-light-orange);
+      		--paper-slider-pin-color: var(--bt-dark-orange);
+		}
+
+		#optionDesc {
+			position: absolute;
+			bottom: 0;
+			width: 95%;
+			opacity: 0.7;
+		}
+	</style>
+	<template>
+			<h2>{{optionTitle}}</h2><hr/>
+			<paper-dropdown-menu label="How Many RGBIO8 Boards?">
+				<paper-listbox class="dropdown-content">
+					<paper-item>1</paper-item>
+					<paper-item>2</paper-item>
+					<paper-item>3</paper-item>
+					<paper-item>5</paper-item>
+					<paper-item>6</paper-item>
+					<paper-item>7</paper-item>
+					<paper-item>8</paper-item>
+					<paper-item>9</paper-item>
+					<paper-item>10</paper-item>
+					<paper-item>11</paper-item>
+					<paper-item>12</paper-item>
+				</paper-listbox>
+		</paper-dropdown-menu>
+		<p id="optionDesc">{{optionDescription}}</p>
+   	</template>
+</dom-module>
+
+<script>
+Polymer({
+	is: 'slider-dropdown-panel',
+	properties: {
+		value: Number,
+		minVal: Number,
+		maxVal: Number,
+		step: Number,
+		optionTitle: String,
+		optionDescription: String,
+	}
+});
+</script>

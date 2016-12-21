@@ -1,5 +1,5 @@
 var createRadioPanel = function(opt) {
-        
+
         //build a radio panel
         var p = Polymer.Base.create('radio-option-panel', {
             "id": opt.id + "Panel",
@@ -10,12 +10,12 @@ var createRadioPanel = function(opt) {
         });
         var na = Polymer.Base.create("neon-animatable", {});
         Polymer.dom(na).appendChild(p);
-        
+
         return {"panel": p, "wrapper": na, "option": opt};
     }
 
     var createSwitchPanel = function(opt) {
-         
+
         //build the switch option panel
         var s = Polymer.Base.create('switch-option-panel', {
             "id": opt.id + "Panel",
@@ -32,6 +32,23 @@ var createRadioPanel = function(opt) {
     var createSliderPanel = function(opt) {
         //Build the slider panel
         var s = Polymer.Base.create('slider-option-panel', {
+            "id": opt.id + "Panel",
+            "value": opt.value,
+            "minVal": opt.min,
+            "maxVal": opt.max,
+            "step": opt.step,
+            "optionTitle": opt.title || opt.id,
+            "optionDescription": opt.description || " "
+        });
+        var na = Polymer.Base.create("neon-animatable", {});
+        Polymer.dom(na).appendChild(s);
+
+        return {"panel": s, "wrapper": na, "option": opt};
+    }
+
+    var createDropdownPanel = function(opt) {
+        //Build the slider panel
+        var s = Polymer.Base.create('dropdown-option-panel', {
             "id": opt.id + "Panel",
             "value": opt.value,
             "minVal": opt.min,
@@ -106,7 +123,7 @@ var createRadioPanel = function(opt) {
                         insertFunc(set.dependants[dep].wrapper);
                     }
                 }
-            } 
+            }
             //ensure all the dependant panels have been removed
             else {
                 var masterWrapper = set.wrapper;
@@ -147,4 +164,4 @@ var createRadioPanel = function(opt) {
         set.setup = setup.bind(this);
 
         return set;
-    }   
+    }
