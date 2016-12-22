@@ -50,10 +50,6 @@ var createRadioPanel = function(opt) {
         //Build the slider panel
         var s = Polymer.Base.create('dropdown-option-panel', {
             "id": opt.id + "Panel",
-            "value": opt.value,
-            "minVal": opt.min,
-            "maxVal": opt.max,
-            "step": opt.step,
             "optionTitle": opt.title || opt.id,
             "optionDescription": opt.description || " "
         });

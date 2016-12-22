@@ -288,5 +288,4 @@ var app = null;
 window.onload = function() {
     document.getElementById("loadingBackdrop").open();
     app = new application();
-    app.clearCache();
 }
