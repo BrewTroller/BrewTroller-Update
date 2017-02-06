@@ -19,6 +19,9 @@
   ],
   "author": "Eric Yanush",
   "license": "MIT",
-  "devDependencies": {
+  "devDependencies": {},
+  "dependencies": {
+    "btflasher": "git+https://github.com/ericyanush/btflasher.git",
+    "tmp": "0.0.31"
   }
 }

@@ -22,7 +22,9 @@ var createOptionPanels = function(options) {
 				panel = createDependantPanelSet(option);
 		}
 
-		panels.push(panel);
+		if (panel) {
+            panels.push(panel);
+        }
 	}
 
 	return panels;

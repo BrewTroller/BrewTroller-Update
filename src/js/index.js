@@ -1,19 +1,8 @@
 application = function() {
 
-    var clientPaths = {
-        "darwin": {
-            "x64": "/client/mac/BTClient-x64",
-            "ia32": "/client/mac/BTClient"
-        },
-        "win32": {
-            "x64": "/client/win/BTClient-x64.exe",
-            "ia32": "/client/win/BTClient.exe"
-        },
-        "linux": {
-            "x64": "/client/linux/BTClient-x64",
-            "ia32": "/client/linux/BTClient"
-        }
-    };
+    var btflasher = require('btflasher');
+    var scanner = btflasher.Scanner();
+    var flasher = btflasher.Flasher();
 
     var loadingOpts = false;
     var waitingOnBoards = false;
@@ -33,8 +22,9 @@ application = function() {
             delete optPanels[p];
         }
         //remove install panel to make inserting option panels easier
-        if (installPanel.parentNode) {
-            Polymer.dom(pushPages).removeChild(installPanel);
+        var installWrapper = installPanel.parentNode;
+        if (installPanel.parentNode.parentNode) {
+            Polymer.dom(pushPages).removeChild(installWrapper);
         }
 
         //Create new option panels
@@ -48,24 +38,25 @@ application = function() {
             }
         }
         // add the install panel
-        Polymer.dom(pushPages).appendChild(installPanel);
+        Polymer.dom(pushPages).appendChild(installWrapper);
     }
 
     var loadOptions = function(options) {
         opts = options;
         loadingOpts = false;
-        var pushPages = document.getElementsByTagName("push-pages")[0];
+        //var pushPages = document.getElementsByTagName("push-pages")[0];
+        var pushPages = Polymer.dom().querySelector("push-pages")
         //setup verion option
         verPanel = createVersionsPanel(options);
         //setup listener to create rest of options panels
         verPanel.panel.addEventListener("selectionChange", versionSelection)
         Polymer.dom(pushPages).appendChild(verPanel.wrapper);
-
-        //add the installer panel
-        var ip = document.createElement('install-panel');
-        installPanel = document.createElement('neon-animatable');
-        installPanel.appendChild(ip);
-        ip.addEventListener("beginFirmwareUpload", installHandler);
+        
+        //add the installer panel 
+        installPanel = document.createElement('install-panel');
+        var installPanelWrapper = document.createElement('neon-animatable');
+        installPanelWrapper.appendChild(installPanel);
+        installPanel.addEventListener("beginFirmwareUpload", installHandler);
     }
 
     var installHandler = function() {
@@ -75,8 +66,10 @@ application = function() {
         options["BuildVersion"] = verPanel.panel.selected;
 
         //Get build from server
-        var installPanel = document.getElementsByTagName('install-panel')[0];
-        installPanel.requestingBuild = true;
+        installPanel.statusText = "Requesting Build...";
+        installPanel.indeterminate = true;
+        installPanel.progressDisabled = false;
+
         //Get build from server
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "http://build.brewtroller.net:8080/build", true);
@@ -85,10 +78,8 @@ application = function() {
             if (xhr.readyState == 4) {
                 if (xhr.status == 200) {
                     if (xhr.response.hasOwnProperty('binary')) {
-                        installPanel.uploadingToBoard = true;
-                        installPanel.requestingBuild = false;
-                        app.socket.send(JSON.stringify({"type": "2", "device": device, "payload": xhr.response.binary}));
-                        return;
+                        app.flashBinary(xhr.response.binary);
+                        return; 
                     }
                 }
                 handleServerError(xhr.response, xhr.status);
@@ -119,10 +110,29 @@ application = function() {
     }
 
     var device = null;
-    var handleClientMessage = function(m) {
-        //Handle boards return
-        if (m instanceof Array) {
-            if (m.length == 0) {
+    var scanForBoards = function() {
+        var spinner = document.getElementById("loadingSpinner");
+        var overlay = document.getElementById("loadingBackdrop");
+
+        //Ensure that we have the display setup correctly to show that we are scanning
+        overlay.querySelector("span").innerHTML = "Searching for BrewTrollers...";
+        spinner.style.display = "";
+        overlay.refit();
+        //spinner.reset();
+        spinner.active = true;
+        waitingOnBoards = true;
+
+        scanner.enumeratePorts(function(results) {
+            var targetBoard = null;
+
+            for (r in results) {
+                var currentPort = results[r];
+                if (currentPort.btInfo.positiveID) {
+                    targetBoard = currentPort;
+                }
+            }
+
+            if (targetBoard == null) {
                 //Got no boards, show error
                 var overlay = document.getElementById("loadingBackdrop");
                 var spinner = document.getElementById("loadingSpinner");
@@ -136,80 +146,75 @@ application = function() {
                 overlay.refit();
                 //Check for more boards in 5 seconds
                 Polymer.Base.async(function() {
-                    scanForBoards.call(app);
+                    scanForBoards.call(app);   
                 }, 5000);
             }
             else {
                 //use first board
                 waitingOnBoards = false;
                 var info = document.getElementsByTagName('info-panel')[0];
-                var statusParts = m[0].Status.split("\t");
-                info.port = m[0].PortId;
+                info.port = targetBoard.name;
                 info.board = "Unable to detect board version";
-                info.firmware = statusParts[3] + (statusParts[4] == "0" ? "" : ("." + statusParts[4]));
+                info.firmware = targetBoard.btInfo.version;
                 document.getElementById("loadingBackdrop").close();
-                device = m[0].PortId;
+                device = targetBoard.name;
             }
-        } else {
-            if (m.hasOwnProperty("flash")) {
-                var installPanel = document.getElementsByTagName('install-panel')[0];
-                installPanel.uploadingToBoard = false;
-                if (m.flash != "complete"){
-                    var overlay = document.getElementById('loadingBackdrop');
-                    //remove spinner if necessary
-                    var loadingSpinner = document.getElementById("loadingSpinner");
-                    if (loadingSpinner != null) {
-                        overlay.removeChild(loadingSpinner);
+        });
+    }
+
+    var setupFlasher = function(hexFile) {
+        flasher.serialportName = device;
+        flasher.hexFile = hexFile;
+        flasher.loadConfigFile("./avrdude.conf");
+    }
+
+    var flashBoard = function(baudRate, retryFunction) {
+        flasher.serialBaudRate = baudRate;
+
+        installPanel.statusText = "Flashing...";
+
+        flasher.flash(function(perc, done, success) {
+            if (done) {
+                if (success) {
+                    installPanel.statusText = "Flashing Complete";
+                    installPanel.resetProgress();
+                }
+                else {
+                    if (retryFunction) {
+                        retryFunction();
                     }
-                    overlay.querySelector("span").innerHTML = "Error flashing Board!:<br/>" + m.flash;
-                    overlay.open();
+                    else {
+                        installPanel.statusText = "Flashing failed.";
+                        installPanel.resetProgress();
+                        var messages = flasher.getLogMessages()
+                        console.log(messages);    
+                    }
                 }
             }
-        }
+            else {
+                installPanel.indeterminate = false;
+                installPanel.progressValue = perc;
+            }
+        });
     }
 
-    var scanForBoards = function() {
-        //If the socket isn't open, do nothing
-        if (!this.socket || !this.socket.OPEN) {
-            return;
-        }
-        var spinner = document.getElementById("loadingSpinner");
-        var overlay = document.getElementById("loadingBackdrop");
+    this.flashBinary = function(binaryData) { 
 
-        //Ensure that we have the display setup correctly to show that we are scanning
-        overlay.querySelector("span").innerHTML = "Searching for BrewTrollers...";
-        spinner.style.display = "";
-        overlay.refit();
-        //spinner.reset();
-        spinner.active = true;
-        waitingOnBoards = true;
+        installPanel.statusText = "Preparing upload...";
 
-        //call timeout on scan after 3 seconds,
-        //  we do this because the scan happens so fast the user can't actually
-        //  see that anything is happening
-        var sendScanMessage = function() {
-            var message = {"type": "1"};
-            this.socket.send(JSON.stringify(message));
-        }
-        var self = this;
-        Polymer.Base.async(function() {
-            sendScanMessage.call(self);
-        }, 3000);
+        var tmp = require('tmp');
+        var fs = require('fs');
+        var tmpHex = tmp.fileSync({ mode: 0644, prefix: 'btupdate-', postfix: '.hex' });
+
+        fs.appendFile(tmpHex.name, binaryData);
+
+        setupFlasher(tmpHex.name);        
+
+        // Try flash at 115200, if it fails, retry at 57600baud
+        flashBoard(115200, function() {
+            flashBoard(57600, null);
+        });
     }
-
-    this.socket = null;
-    var handleClientSpawn = function(port) {
-        app.socket = new WebSocket("ws://127.0.0.1:" + port);
-        app.socket.onmessage = function(e) {
-            handleClientMessage(JSON.parse(e.data));
-        }
-        app.socket.onopen = function(){
-            //Scan for boards
-            scanForBoards.call(app);
-        }
-    }
-
-    var clientPort = null;
 
     //kickoff options pull from server
     var xhr = new XMLHttpRequest();
@@ -234,54 +239,7 @@ application = function() {
     }
     xhr.send();
     loadingOpts = true;
-
-
-    this.client = null;
-    waitingOnBoards = true;
-
-    //If we are running in the Node.js environment
-    if (typeof process != "undefined") {
-        //Ensure that the executables have permission to execute
-        var cwd = process.cwd();
-        var executable =  cwd + clientPaths[process.platform][process.arch];
-        var fs = require('fs');
-        fs.chmodSync(executable, 0777);
-
-        var spawn = require('child_process').spawn;
-        //spawn a client instance
-        this.client = spawn(executable);
-        this.client.stdout.on('data', function(data){
-            if (clientPort == null) {
-                handleClientSpawn(Number(data));
-            }
-        });
-        this.client.stderr.on('data', function(data) {
-            console.log("err: " + data);
-            handleClientError(data);
-        });
-        this.client.on('close', function(code){
-            console.log("client closed: " + code);
-            this.client = null;
-        });
-
-        var onClose = function(e) {
-            if (app.socket != null) {
-                app.socket.close();
-                app.socket = null;
-            }
-            if (app.client != null) {
-                app.client.kill();
-                app.client = null;
-            }
-            this.close(true);
-        }
-        var nw = require('nw.gui');
-        var win = nw.Window.get();
-        win.on('close', onClose);
-    }
-    else {
-        waitingOnBoards = false;
-    }
+    scanForBoards();
 };
 
 var app = null;
