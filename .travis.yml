@@ -1,6 +1,11 @@
 language: node_js
-sudo: false
+os: osx
+osx_image: xcode8.3
 node_js: "7"
+
+before_install:
+  - brew update
+  - brew install wine imagemagick graphicsmagick
 
 install:
   - npm install
