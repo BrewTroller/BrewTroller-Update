@@ -1,7 +1,4 @@
-language: node_js
 os: osx
-osx_image: xcode8.3
-node_js: "7"
 
 before_install:
   - rm -rf ~/.nvm/ && git clone --depth 1 https://github.com/creationix/nvm.git ~/.nvm
@@ -9,7 +6,8 @@ before_install:
   - nvm install 7.2.0
   - nvm use 7.2.0
   - brew update
-  - brew install wine imagemagick graphicsmagick
+  - brew install wine --without-x11 
+  - brew install imagemagick graphicsmagick gnu-tar xz mono
 
 install:
   - npm install
