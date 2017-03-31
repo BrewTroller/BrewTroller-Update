@@ -13,6 +13,16 @@ Since the inception of the BrewTroller project installing or updating the firmwa
 3. This utility does not actually compile the BrewTroller firmware on your computer! It utilizes a cloud compiler service that we have brewed up, and it is also in pre-alpha stage. Until this utility moves into a release state, the cloud compiler service may not always be available.
 4. Use of this utility on Linux requires your user be added to the `dialout` group. This may be accomplished with the command `$ sudo usermod -a -G dialout YOUR_USER_NAME`
 
+## Local Build Environment
+
+Requrements: Node.js version 7.x
+
+1. clone the repo locally
+2. `$ git checkout develop` to get the develop branch
+3. run `$ npm install`
+4. run `$ npm run start` to run a local version
+5. run `$ npm run dist` to build for all platforms
+
 ## Runtime requirements
 
 ### Windows
