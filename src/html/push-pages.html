@@ -38,7 +38,7 @@
 			margin: 0 10px 10px;
 		}
 
-
+		
 	</style>
 
 	<template>
@@ -75,18 +75,26 @@
 		this.$.pages.selectNext();
 	},
 	_nextBtnDisabled: function(selected, itemCount) {
-		//return selected == (this.$.pages.items.length - 1);
-		return selected == (this.$.pages.items.length);
+		return selected == (itemCount - 1);
 	},
 	_prevBtnDisabled: function(selected) {
 		return selected == 0;
 	},
 	ready: function() {
 		this.selected = 0;
-
+        this.pageCount = this.$.pages.items.length;
+		
 		var self = this;
 		this._mo = new MutationObserver(function(mutations) {
-			self.pageCount = self.$.pages.items.length;
+            var pageCount = self.$.pages.items.length;
+            for (m in mutations) {
+                var mutation = mutations[m];
+                if (mutation.type == "childList") {
+                    pageCount += mutation.addedNodes.length;
+                    pageCount -= mutation.removedNodes.length;
+                }
+            }
+            self.pageCount = pageCount
 		});
 		var config = { attributes: false, childList: true, characterData: false };
 		this._mo.observe(this.$.pages, config);

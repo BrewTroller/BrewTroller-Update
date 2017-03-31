@@ -1,0 +1,17 @@
+os: osx
+
+before_install:
+  - rm -rf ~/.nvm/ && git clone --depth 1 https://github.com/creationix/nvm.git ~/.nvm
+  - source ~/.nvm/nvm.sh
+  - nvm install 7.2.0
+  - nvm use 7.2.0
+  - brew update
+  - brew install wine imagemagick graphicsmagick gnu-tar xz mono
+
+install:
+  - npm install
+  - ./node_modules/.bin/bower install
+  
+script:
+  - npm run dist
+

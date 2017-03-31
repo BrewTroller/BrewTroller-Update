@@ -1,24 +1,43 @@
 {
-  "name": "BrewTroller Update",
-  "version": "1.0.0",
+  "name": "brewtrollerupdate",
+  "version": "1.0.0-a8",
   "description": "BrewTroller Board Programmer",
-  "main": "src/html/index.html",
+  "main": "src/js/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "single-instance": true,
-  "window": {
-    "toolbar": false,
-    "width": 1024,
-    "height": 500,
-    "position": "mouse",
-    "resizable": false
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ./src/js/index.js",
+    "pack": "build --dir",
+    "dist": "build -mwl --x64 --publish onTag"
   },
   "keywords": [
     "brewtroller"
   ],
   "author": "Eric Yanush",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ericyanush/BrewTroller-Update.git"
+  },
   "devDependencies": {
+    "bower": "^1.8.0",
+    "electron": "~1.6.2",
+    "electron-builder": "^16.4.2"
+  },
+  "dependencies": {
+    "btflasher": "git+https://github.com/ericyanush/btflasher.git",
+    "tmp": "0.0.31"
+  },
+  "cmake-js": {
+    "runtime": "electron",
+    "runtimeVersion": "1.6.2"
+  },
+  "build": {
+    "appId": "com.brewtroller.brewtrollerupdate",
+    "productName": "BrewTroller Update",
+    "npmRebuild": true,
+    "npmSkipBuildFromSource": true,
+    "publish": [
+      "github"
+    ]
   }
 }

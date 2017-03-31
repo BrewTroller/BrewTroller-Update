@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 
 <link rel="import" href="colors.html">
 
@@ -33,23 +34,20 @@
 			align-items: center;
 		}
 		paper-item {
-			width: 275px;
+			width: 90%;
 		}
 		paper-item span {
-			margin-right: 10px;
+			margin: 0 auto;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			word-wrap: normal;
 			text-align: left;
 		}
-		paper-item paper-spinner {
-			position: absolute;
-		}
+		
 		iron-icon.hidden {
 			opacity: 0 !important;
 		}
 		paper-item iron-icon {
-			position: absolute;
 			margin-top: 5px;
 			--iron-icon-height: 30px;
 			--iron-icon-width: 30px;
@@ -66,22 +64,25 @@
 			opacity: 0 !important;
 			pointer-events: none !important;
 		}
+
+        paper-progress {
+             --paper-progress-active-color: var(--bt-light-orange);
+             width: 90%;
+             margin: 0 auto;
+        }
+
 	</style>
 	<template>
 			<h2>Install</h2><hr/>
         	<div class="list short">
         		<paper-item>
-        			<span>Fetching Build from Server...</span>
-        			<paper-spinner id="fetchSpinner"></paper-spinner>
-        			<iron-icon id="fetchDone" class="hidden" icon="icons:done"></iron-icon>
+        			<span>{{statusText}}</span>
         		</paper-item>
-        		<paper-item>
-        			<span>Uploading to board...</span>
-        			<paper-spinner id="uploadSpinner"></paper-spinner>
-        			<iron-icon id="uploadDone" class="hidden" icon="icons:done">
-        		</iron-icon></paper-item>
+                <paper-item>
+                    <paper-progress disabled="[[progressDisabled]]" indeterminate="[[indeterminate]]" value="[[progressValue]]"></paper-progress>
+                </paper-item>
         	</div>
-        	<div class="layout horizontal"><paper-fab icon="icons:file-upload" id="uploadBtn" on-click="_uploadClick" elevation="5"></paper-fab>
+        	<div class="list short horizontal"><paper-fab icon="icons:file-upload" disabled="[[flashInProgress]]" id="uploadBtn" on-click="_uploadClick" elevation="5"></paper-fab>
 	</template>
 </dom-module>
 
@@ -89,52 +90,34 @@
 Polymer({
 	is: 'install-panel',
 	properties: {
-		requestingBuild: {
-			type: Boolean,
-			observer: '_buildRequestChanged'
-		},
-		uploadingToBoard: {
-			type: Boolean,
-			observer: '_uploadStatusChange'
-		}
+        flashInProgress: Boolean,
+        statusText: String,
+        indeterminate: Boolean,
+        progressValue: Number,
+        progressDisabled: Boolean
 	},
 	_uploadClick: function() {
 		//Fire beginUpload event
 		this.fire("beginFirmwareUpload", null, {bubbles: true, cancelable: false, node: this});
-		//Hide the dones
-		this.$.fetchDone.classList.add('hidden');
-		this.$.uploadDone.classList.add('hidden');
-	},
-	_buildRequestChanged: function(newVal, oldVal) {
-		this._updateButton();
-		//if we are requesting, set the spinner
-		if (newVal) {
-			this.$.fetchSpinner.active = true;
-			this.$.fetchDone.classList.add('hidden');
-		}
-		else if (oldVal && !newVal) {
-			this.$.fetchSpinner.active = false;
-			this.$.fetchDone.classList.remove('hidden');
-		}
-	},
-	_uploadStatusChange: function(newVal, oldVal) {
-		this._updateButton();
-		//If we are uploading, set the spinner
-		if (newVal) {
-			this.$.uploadSpinner.active = true;
-			this.$.uploadDone.classList.add('hidden');
-		}
-		else if (oldVal && !newVal) {
-			this.$.uploadSpinner.active = false;
-			this.$.uploadDone.classList.remove('hidden');
-		}
+		//Set the flash as in progress
+        this.flashInProgress = true;
+        this.prgressDisabled = false;
 	},
 	ready: function() {
-		this.uploadingToBoard = false;
-		this.requestingBuild = false;
+        this.flashInProgress = false;
+        this.statusText = "Ready";
+        this.indeterminate = true;
+        this.progressDisabled = true;
+        this.progressValue = 0;
 	},
+    resetProgress: function() {
+        this.flashInProgress = false;
+        this.indeterminate = true;
+        this.progressDisabled = true;
+        this.progressValue = 0;
+    },
 	_updateButton: function() {
-		if (this.requestingBuild == true || this.uploadingToBoard == true) {
+		if (this.flashInProgress) {
 			this.$.uploadBtn.classList.add('hidden');
 		}
 		else {
