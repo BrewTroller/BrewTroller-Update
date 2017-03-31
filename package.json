@@ -19,6 +19,7 @@
     "url": "https://github.com/ericyanush/BrewTroller-Update.git"
   },
   "devDependencies": {
+    "bower": "^1.8.0",
     "electron": "~1.6.2",
     "electron-builder": "^16.4.2"
   },
@@ -35,6 +36,8 @@
     "productName": "BrewTroller Update",
     "npmRebuild": true,
     "npmSkipBuildFromSource": true,
-    "publish": ["github"]
+    "publish": [
+      "github"
+    ]
   }
 }

@@ -10,7 +10,8 @@ before_install:
 
 install:
   - npm install
-
+  - ./node_modules/.bin/bower install
+  
 script:
   - npm run dist
 
