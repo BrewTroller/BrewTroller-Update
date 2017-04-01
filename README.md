@@ -15,13 +15,10 @@ Since the inception of the BrewTroller project installing or updating the firmwa
 
 ## Local Build Environment
 
-Requrements: Node.js version 7.x
-
 1. clone the repo locally
 2. `$ git checkout develop` to get the develop branch
-3. run `$ npm install`
+3. run `$ npm run setup`
 4. run `$ npm run start` to run a local version
-5. run `$ npm run dist` to build for all platforms
 
 ## Runtime requirements
 
@@ -30,15 +27,9 @@ Currently only Windows 7 and newer is supported by BrewTroller Update, and the f
 
 - [MSVC Redistributable 2015](https://www.microsoft.com/en-ca/download/details.aspx?id=48145)
 
-## Running from source
-To run from source, run the following commands:
-
-```
-$ npm run setup
-$ npm start
-```
-
 ## Building
+
+### Cross-platform packaging 
 
 Currently (due to limitations with electron-builder), only a Mac host machine can cross build for all three platforms. In order to cross build for all three platforms, the following dependancies must be installed on your Mac:
 
@@ -51,14 +42,14 @@ Currently (due to limitations with electron-builder), only a Mac host machine ca
 To intiate a build for all three systems, run: 
 
 ```
-$ npm install
+$ npm run setup
 $ npm run dist
 ```
 
-To build for a single OS:
-
+### Packaging for single OS
+ 
 ```
-$ npm install
+$ npm run setup
 $ ./node_modules/.bin/build -m
 ```
 
