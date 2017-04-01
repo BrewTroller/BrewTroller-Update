@@ -30,3 +30,36 @@ Currently only Windows 7 and newer is supported by BrewTroller Update, and the f
 
 - [MSVC Redistributable 2015](https://www.microsoft.com/en-ca/download/details.aspx?id=48145)
 
+## Running from source
+To run from source, run the following commands:
+
+```
+$ npm run setup
+$ npm start
+```
+
+## Building
+
+Currently (due to limitations with electron-builder), only a Mac host machine can cross build for all three platforms. In order to cross build for all three platforms, the following dependancies must be installed on your Mac:
+
+- wine
+- mono
+- gnu-tar
+- graphicsmagick
+- xz
+
+To intiate a build for all three systems, run: 
+
+```
+$ npm install
+$ npm run dist
+```
+
+To build for a single OS:
+
+```
+$ npm install
+$ ./node_modules/.bin/build -m
+```
+
+Where the `-m` will build for macOS. To build for Windows or Linux instead, replace the `-m` argument with `-w` or `-l` respectively.

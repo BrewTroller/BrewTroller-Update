@@ -4,10 +4,10 @@
   "description": "BrewTroller Board Programmer",
   "main": "src/js/index.js",
   "scripts": {
+    "setup": "npm install --runtime=electron --target=1.6.2",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron ./src/js/index.js",
-    "pack": "build --dir",
-    "dist": "build -mwl --x64 --publish onTag"
+    "dist": "build -mwl --x64 --publish onTag",
   },
   "keywords": [
     "brewtroller"
