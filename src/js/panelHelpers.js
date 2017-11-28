@@ -12,9 +12,9 @@ var createRadioPanel = function(opt) {
         Polymer.dom(na).appendChild(p);
 
         return {"panel": p, "wrapper": na, "option": opt};
-    }
+}
 
-    var createSwitchPanel = function(opt) {
+var createSwitchPanel = function(opt) {
 
         //build the switch option panel
         var s = Polymer.Base.create('switch-option-panel', {
@@ -27,9 +27,9 @@ var createRadioPanel = function(opt) {
         Polymer.dom(na).appendChild(s);
 
         return {"panel": s, "wrapper": na, "option": opt};
-    }
+}
 
-    var createSliderPanel = function(opt) {
+var createSliderPanel = function(opt) {
         //Build the slider panel
         var s = Polymer.Base.create('slider-option-panel', {
             "id": opt.id + "Panel",
@@ -44,9 +44,9 @@ var createRadioPanel = function(opt) {
         Polymer.dom(na).appendChild(s);
 
         return {"panel": s, "wrapper": na, "option": opt};
-    }
+}
 
-    var createDropdownPanel = function(opt) {
+var createDropdownPanel = function(opt) {
         //Build the slider panel
         var s = Polymer.Base.create('dropdown-option-panel', {
             "id": opt.id + "Panel",
@@ -57,9 +57,22 @@ var createRadioPanel = function(opt) {
         Polymer.dom(na).appendChild(s);
 
         return {"panel": s, "wrapper": na, "option": opt};
-    }
+}
 
-    var createDependantPanelSet = function(opt) {
+var createRGBIOMapPanel = function(opt, boardnum) {
+    var s = Polymer.Base.create('rgbio-mapping-panel', {
+        "id": "rgbioMapPanel" + boardnum,
+        "optionTitle": "RGBIO Board " + (boardnum + 1) + " Mapping",
+        "optionDescription": opt.description || " ",
+        "availableSelections": opt.availableSelections
+    });
+    var na = Polymer.Base.create("neon-animatable", {});
+    Polymer.dom(na).appendChild(s);
+
+    return {"panel": s, "wrapper": na, "option": opt, "boardnum": boardnum}
+}
+
+var createDependantPanelSet = function(opt) {
 
         var set = {"option": opt,
                    "panel": null,
@@ -160,4 +173,91 @@ var createRadioPanel = function(opt) {
         set.setup = setup.bind(this);
 
         return set;
+}
+
+var createDependantCountedPanelSet = function(opt) {
+    var set = {"option": opt,
+    "panel": null,
+    "wrapper": null,
+    "dependants": [],
+    "setup": null,
+    "masterOrCountChangeHandler": null,
+    "dependantsCountOption": opt.dependantsCountOption,
+    "dependantPanelType": opt.dependantPanelType,
+    "dependantPanelOptions": opt.dependantOptions
+    };
+
+    //Create the dependant option panel
+    set.panel = Polymer.Base.create('dependant-options-panel', {
+        "id": opt.id + "MasterPanel",
+        "optionDescription": opt.description,
+        "optionTitle": opt.title || opt.id,
+        "masterOption": opt.master,
+        "boolOptions": opt.options.bool,
+        "rangeOptions": opt.options.slider,
+        "dependantsCountOption": opt.dependantsCountOption,
+        "enumOptions": []
+    });
+    set.wrapper = Polymer.Base.create('neon-animatable', {});
+    Polymer.dom(set.wrapper).appendChild(set.panel);
+
+    //Create the slave panels
+    for (var i = 0; i < set.dependantsCountOption.max; i++) {
+        var dpanel = null;
+        switch(set.dependantPanelType) {
+            case "switch":
+            dpanel = createSwitchPanel(set.dependantPanelOptions);
+            break;
+            case "slider":
+            dpanel = createSliderPanel(set.dependantPanelOptions);
+            break;
+            case "radio":
+            dpanel = createRadioPanel(set.dependantPanelOptions);
+            break;
+            case "rgbio-map":
+            dpanel = createRGBIOMapPanel(set.dependantPanelOptions, i);
+            break;
+        }
+        set.dependants.push(dpanel);
     }
+
+    var masterOrCountChange = function(e) {
+        var masterWrapper = set.wrapper;
+        var container = Polymer.dom(masterWrapper).parentNode;
+        //ensure all the dependant panels are in the container
+        if (set.option.master.on) {
+            for (index in set.dependants) {
+                var lastWrapper = index == 0 ? masterWrapper : set.dependants[index - 1].wrapper;
+                if (index < set.dependantsCountOption.value &&
+                 !container.contains(set.dependants[index].wrapper)) {
+                    Polymer.dom(container).insertBefore(set.dependants[index].wrapper, lastWrapper.nextSibling);
+                }
+
+                if (index >= set.dependantsCountOption.value &&
+                    container.contains(set.dependants[index].wrapper)) {
+                    Polymer.dom(container).removeChild(set.dependants[index].wrapper);
+                }
+            }
+        }
+        else {
+            for (dep in set.dependants) {
+                if (container.contains(set.dependants[dep].wrapper)) {
+                    Polymer.dom(container).removeChild(set.dependants[dep].wrapper);
+                }
+            }
+        }
+        if (e.detail.newVal) {
+            
+            
+        }
+    }
+
+    var setup = function() {
+        set.masterOrCountChangeHandler = masterOrCountChange.bind(this);
+        set.panel.addEventListener("masterOptionChange", set.masterOrCountChangeHandler);
+        set.panel.addEventListener("dependantCountChange", set.masterOrCountChangeHandler)
+    }
+    set.setup = setup.bind(this);
+
+    return set;
+}

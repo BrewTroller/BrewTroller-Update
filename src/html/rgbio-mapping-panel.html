@@ -1,0 +1,156 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/demo-pages.html">
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html"
+<link rel="import" href="colors.html">
+
+
+<dom-module id="rgbio-mapping-panel">
+	<style>
+
+		:host {
+			background-color: white;
+    		padding: 24px;
+    		margin: 0 24px 24px 24px;
+    		display: inline-block;
+   			@apply(--shadow-elevation-2dp);
+
+		}
+		hr {
+			border: 0;
+			height: 1px;
+			background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
+			margin-bottom: 10px;
+		}
+		h2 {
+			margin-bottom: 5px;
+			margin-top: 0px;
+		}
+
+		paper-dropdown-menu {
+			margin-left: 15px;
+			margin-right: 15px;
+			width: 17%;
+		}
+
+		div:not(:last-of-type) {
+			margin-bottom: 15px;
+		}
+
+		#optionDesc {
+			position: absolute;
+			bottom: 0;
+			width: 95%;
+			opacity: 0.7;
+		}
+	</style>
+	<template>
+	<h2>{{optionTitle}}</h2>
+	<div class="layout horizontal wrap center center-center">
+		<template is="dom-repeat" items="{{options}}" as="rgbio">
+			<paper-dropdown-menu label="{{rgbio.type}} {{rgbio.number}}" data-type="{{rgbio.type}}" data-index="{{rgbio.number}}">
+				<paper-listbox class="dropdown-content">
+					<template is="dom-repeat" items="{{availableSelections}}" as="selection">
+						<paper-item data-type="{{selection.type}}" data-index="{{selection.index}}" data-recipeindex="{{selection.recipeIndex}}">{{selection.label}}</paper-item>
+					</template>
+				</paper-listbox>
+			</paper-dropdown-menu>
+		</template>
+	</div>
+	<div class="layout horizontal center center-center">
+		<paper-button raised id="reset">Reset</paper-button>
+	</div>
+	<p id="optionDesc">{{optionDescription}}</p>
+   	</template>
+</dom-module>
+
+<script>
+Polymer({
+	is: 'rgbio-mapping-panel',
+	properties: {
+		availableSelections: {
+			type: Array,
+			value: [{"type": "RGBIO_OUT_HEAT", "index": 0, "label": "HLT Heat", "recipeIndex": 0 }]
+		},
+		inputCount: {
+			type: Number,
+			value: 8,
+			observer: "optionsChanged"
+		},
+		outputCount: {
+			type: Number,
+			value: 8,
+			observer: "optionsChanged"
+		},
+		options: Array,
+		optionTitle: String,
+		optionDescription: String,
+	},
+	listeners: {
+		'reset.tap': 'resetSelections'
+	},
+	resetSelections: function(e) {
+		let dropdowns = this.getElementsByTagName('paper-dropdown-menu');
+		for (var i = 0; i < dropdowns.length; i++) {
+			dropdowns[i]._onIronDeselect();
+			dropdowns[i]._setSelectedItem(null);
+
+			var items = dropdowns[i].getElementsByTagName("paper-item");
+			for (var j = 0; j < items.length; j++) {
+				if (items[j].classList.contains("iron-selected")) {
+					items[j].classList.remove("iron-selected");
+					items[j].removeAttribute("aria-selected");
+				}
+			}
+		}
+	},
+	optionsChanged: function() {
+		var options = [];
+		for (var i = 0; i < this.inputCount; i++) {
+			options.push({"type": "Input", "number": i + 1})
+		}
+		for (var i = 0; i < this.outputCount; i++) {
+			options.push({"type": "Output", "number": i + 1})
+		}
+		this.options = options
+	},
+	computeOutputConfigs: function() {
+		var dropdowns = Polymer.dom(this.root).querySelectorAll("paper-dropdown-menu")
+		var configs = []
+		for (var i = 0; i < dropdowns.length; i++) {
+			//outputs need to be structured {uint8_t type, uint8_t index, uint8_t recipe}
+			if (dropdowns[i].dataType == "Output") {
+				if (dropdowns[i].selectedItem == null) {
+					configs.push("{0,0,0}")
+				}
+				else {
+					var selectedItem = dropdowns[i].selectedItem;
+					var config = [selectedItem.dataType, selectedItem.dataIndex, selectedItem.dataRecipeindex]
+					configs.push("{"+config.join(",")+"}")
+				}
+			}
+		}
+		return "{" + configs.join(",") + "}";
+	},
+	computeInputConfigs: function() {
+		var dropdowns = Polymer.dom(this.root).querySelectorAll("paper-dropdown-menu")
+		var configs = []
+		for (var i = 0; i < dropdowns.length; i++) {
+			//inputs need to structured {uint8_t type, uint8_t index}
+			if (dropdowns[i].dataType == "Input") {
+				if (dropdowns[i].selectedItem == null) {
+					configs.push("{0,0}")
+				}
+				else {
+					var selectedItem = dropdowns[i].selectedItem;
+					var config = [selectedItem.dataType, selectedItem.dataIndex];
+					configs.push("{"+config.join(",")+"}")
+				}
+			}
+		}
+		return "{" + configs.join(",") + "}";
+	}
+});
+</script>

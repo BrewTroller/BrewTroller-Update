@@ -13,7 +13,7 @@ var retrieveDependantOptions = function(cachedOpt) {
 	var depOpts = {};
 	//Only include options if master is enabled, else allow server to use defaults
 	if (cachedOpt.option.master.on) {
-		depOpts[cachedOpt.option.master.value] = true;
+		depOpts[cachedOpt.option.master.value] = "ON";
 		//iterate over dependant options
 		for (var i = 0; i < cachedOpt.option.options.bool.length; i++) {
 			var curr = cachedOpt.option.options.bool[i];
@@ -41,6 +41,54 @@ var retrieveDependantOptions = function(cachedOpt) {
 					depOpts[curr.option.id] = curr.panel.value;
 					break;
 			}
+		}
+	}
+	return depOpts;
+}
+
+var retrieveDependantHomogenousSetOptions = function(cachedOpt) {
+	var depOpts = {};
+	if (cachedOpt.option.master.on) {
+		depOpts[cachedOpt.option.master.value] = "ON";
+		//iterate over dependant options
+		for (var i = 0; i < cachedOpt.option.options.bool.length; i++) {
+			var curr = cachedOpt.option.options.bool[i];
+			depOpts[curr.optName] = curr.on;
+		}
+		for (var i = 0; i < cachedOpt.option.options.slider.length; i++) {
+			var curr = cachedOpt.option.options.slider[i];
+			depOpts[curr.optName] = String(curr.value);
+		}
+		// Add the dependants count option
+		depOpts[cachedOpt.dependantsCountOption.optName] = String(cachedOpt.dependantsCountOption.value);
+
+		//iterate over the dependants
+		var rgbioInputMap = [];
+		var rgbioOutputMap = [];
+		for (var i = 0; i < cachedOpt.dependantsCountOption.value; i++) {
+			var curr = cachedOpt.dependants[i];
+			switch (cachedOpt.dependantPanelType) {
+				case "radio":
+					depOpts[curr.id] = retrieveRadioOption(curr);
+					break;
+				case "switch":
+					for (var j = 0; j < curr.option.options.length; i++) {
+						var currSw = curr.option.options[i];
+						depOpts[currSw.optName] = currSw.on ? "ON" : "OFF";
+					}
+					break;
+				case "slider":
+					depOpts[curr.option.id] = curr.panel.value;
+					break;
+				case "rgbio-map":
+					rgbioOutputMap.push(curr.panel.computeOutputConfigs())
+					rgbioInputMap.push(curr.panel.computeInputConfigs());
+					break;
+			}
+		}
+		if (rgbioInputMap.length != 0) {
+			depOpts["RGBIO8_INPUT_MAP"] = "{" + rgbioInputMap.join(",") + "}";
+			depOpts["RGBIO8_OUTPUT_MAP"] = "{" + rgbioOutputMap.join(",") + "}";
 		}
 	}
 	return depOpts;
@@ -74,6 +122,12 @@ var collectOptions = function(optionPanels) {
 				var addOpts = retrieveDependantOptions(cachedOpt);
 				for (prop in addOpts) {
 					selections[prop] = addOpts[prop];
+				}
+				break;
+			case "dependantHomogeneousSet":
+				var opts = retrieveDependantHomogenousSetOptions(cachedOpt);
+				for (prop in opts) {
+					selections[prop] = opts[prop];
 				}
 				break;
 		}

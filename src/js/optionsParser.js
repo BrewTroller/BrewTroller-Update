@@ -20,6 +20,10 @@ var createOptionPanels = function(options) {
 				break;
 			case "dependant":
 				panel = createDependantPanelSet(option);
+				break;
+			case "dependantHomogeneousSet":
+				panel = createDependantCountedPanelSet(option);
+				break;
 		}
 
 		if (panel) {

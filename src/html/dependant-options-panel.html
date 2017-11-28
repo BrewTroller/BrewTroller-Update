@@ -90,6 +90,9 @@
    				<template is="dom-repeat" items="{{rangeOptions}}">
    					<div class="line"><span>{{item.name}}</span><paper-slider pin value="{{item.value}}" max="{{item.max}}" min="{{item.min}}" step="{{item.step}}" editable disabled$="{{!masterOption.on}}"></paper-slider></div>
    				</template>
+   				<template is="dom-if" if="{{hasDependantsCountOption}}">
+   					<div class="line"><span>{{dependantsCountOption.name}}</span><paper-slider pin value="{{dependantsCountOption.value}}" max="{{dependantsCountOption.max}}" min="{{dependantsCountOption.min}}" step="{{dependantsCountOption.step}}" editable disabled$="{{!masterOption.on}}"></paper-slider></div>
+   				</template>
    			</div>
    			<p id="optionDesc">{{optionDescription}}</p>
    	</template>
@@ -104,25 +107,30 @@ Polymer({
 		boolOptions: Array,
 		masterOption: Object,
 		rangeOptions: Array,
-		enumOptions: Array
+		enumOptions: Array,
+		dependantsCountOption: Object,
+		hasDependantsCountOption: {
+			type: Boolean,
+			computed: '_hasDependantsCountOption(dependantsCountOption)'
+		}
 	},
 	observers: [
-		"_masterChanged(masterOption.on)"	
+		"_masterChanged(masterOption.on)",
+		"_dependantCountChanged(dependantsCountOption.value)"	
 	],
 	ready: function() {
 		//Demo code
-		/*this.optionTitle = "Direct Fired RIMS";
-		this.optionDescription = "Enable and configure Direct Fired RIMS. asldjf lasjkh glkh sad glkjas hdfl;ashjflawh ouf af lkjasdfhjlk alkewal falkjsfdhasdlkfaskljs";
-		this.masterOption = {name: "Direct Fired RIMS", on: false};
-		this.boolOptions = [{name: "RIMS During Sparge", on : false}]
-		this.enumOptions = [{name:"Temp Sensor", options:["Option 1", "Option 2", "Option 3", "Option 4", "Option 5", "Option 6"]}]
-		this.rangeOptions = [{value: 5, maxVal: 100, minVal: 0, step: 1, name: "RIMS_TEMP_OFFSET"},
-		{value: 180, maxVal: 255, minVal: 0, step: 1, name: "RIMS_MAX_TEMPERATURE"},
-		{value: 190, maxVal: 255, minVal: 0, step: 1, name: "RIMS_ALARM_TEMPERATURE"}]*/
 	},
 	_masterChanged: function() {
 		this.fire("masterOptionChange", 
 			{"prevVal": !this.masterOption.on, "newVal": this.masterOption.on});
+	},
+	_dependantCountChanged: function() {
+		this.fire("dependantCountChange",
+			{"newVal": this.dependantsCountOption.value});
+	},
+	_hasDependantsCountOption: function(dependantsCountOption) {
+		return dependantsCountOption != null
 	}
 });
 </script>
