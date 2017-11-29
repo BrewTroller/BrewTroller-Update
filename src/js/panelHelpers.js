@@ -231,6 +231,7 @@ var createDependantCountedPanelSet = function(opt) {
                 if (index < set.dependantsCountOption.value &&
                  !container.contains(set.dependants[index].wrapper)) {
                     Polymer.dom(container).insertBefore(set.dependants[index].wrapper, lastWrapper.nextSibling);
+                    Polymer.dom(container).flush();
                 }
 
                 if (index >= set.dependantsCountOption.value &&
