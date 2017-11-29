@@ -1,6 +1,6 @@
 {
   "name": "brewtrollerupdate",
-  "version": "1.0.0-a8",
+  "version": "1.0.0-a9",
   "description": "BrewTroller Board Programmer",
   "main": "src/js/index.js",
   "scripts": {
